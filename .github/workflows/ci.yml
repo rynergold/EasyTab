@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-and-build:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer || true
+
+      - name: Run Test Suite
+        run: ./scripts/run_tests.sh
+
+      - name: Build EasyTab.app
+        run: ./scripts/build_app.sh
+
+      - name: Verify Binary
+        run: |
+          test -f build/EasyTab.app/Contents/MacOS/EasyTab
+          echo "Binary verified successfully!"

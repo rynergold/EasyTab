@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer || true
+
+      - name: Run Unit Tests
+        run: ./scripts/run_tests.sh
+
+      - name: Package DMG & ZIP Release
+        run: ./scripts/package_release.sh
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/dist/EasyTab.dmg
+            build/dist/EasyTab.zip
+            build/dist/checksums.txt
+          generate_release_notes: true
+          draft: false
+          prerelease: false
