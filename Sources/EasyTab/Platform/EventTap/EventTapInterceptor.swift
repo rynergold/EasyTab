@@ -140,11 +140,20 @@ public final class EventTapInterceptor: @unchecked Sendable {
 
         // 2. KeyDown events
         if type == .keyDown {
+            let keycode = event.getIntegerValueField(.keyboardEventKeycode)
+
+            // Command + Tab key (keycode 48) - Opens or cycles the switcher
+            if keycode == 48 && isCmdDown {
+                DispatchQueue.main.async {
+                    delegate.onTabPressed()
+                }
+                return nil
+            }
+
+            // All other keystrokes only apply when the switcher is active
             guard delegate.isSwitcherActive() else {
                 return Unmanaged.passUnretained(event)
             }
-
-            let keycode = event.getIntegerValueField(.keyboardEventKeycode)
 
             // Escape key (keycode 53) dismisses switcher
             if keycode == 53 {
@@ -196,14 +205,6 @@ public final class EventTapInterceptor: @unchecked Sendable {
             }
 
             // In Standard Active Mode:
-            // Command + Tab key (keycode 48)
-            if keycode == 48 && isCmdDown {
-                DispatchQueue.main.async {
-                    delegate.onTabPressed()
-                }
-                return nil
-            }
-
             // 's' or 'S' key (keycode 1) -> enter Search Mode!
             if keycode == 1 {
                 DispatchQueue.main.async {
