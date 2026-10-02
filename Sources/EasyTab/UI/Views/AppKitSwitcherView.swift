@@ -99,9 +99,9 @@ final class WindowCardView: NSView {
         thumbnailContainer.wantsLayer = true
         thumbnailContainer.layer?.cornerRadius = 10
         thumbnailContainer.layer?.masksToBounds = true
-        thumbnailContainer.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.35).cgColor
-        thumbnailContainer.layer?.borderWidth = 0
-        thumbnailContainer.layer?.borderColor = nil
+        thumbnailContainer.layer?.backgroundColor = NSColor(white: 0.12, alpha: 0.95).cgColor
+        thumbnailContainer.layer?.borderWidth = 1.0
+        thumbnailContainer.layer?.borderColor = NSColor(white: 0.30, alpha: 0.60).cgColor
 
         // Floating card drop shadow
         let dropShadow = NSShadow()
@@ -114,8 +114,8 @@ final class WindowCardView: NSView {
 
         // Loading placeholder label (app name) while texture streams in
         placeholderLabel.frame = NSRect(x: 10, y: 40, width: 150, height: 24)
-        placeholderLabel.font = NSFont.systemFont(ofSize: 12, weight: .medium)
-        placeholderLabel.textColor = NSColor.white.withAlphaComponent(0.45)
+        placeholderLabel.font = NSFont.systemFont(ofSize: 13, weight: .semibold)
+        placeholderLabel.textColor = NSColor.white.withAlphaComponent(0.90)
         placeholderLabel.alignment = .center
         placeholderLabel.lineBreakMode = .byTruncatingTail
         placeholderLabel.stringValue = windowItem.appName
@@ -129,14 +129,14 @@ final class WindowCardView: NSView {
     private func setupTitle() {
         titleLabel.frame = NSRect(x: 2, y: 114, width: 170, height: 18)
         titleLabel.font = NSFont.systemFont(ofSize: 11, weight: .medium)
-        titleLabel.textColor = .white
+        titleLabel.textColor = NSColor.white.withAlphaComponent(0.85)
         titleLabel.alignment = .center
         titleLabel.lineBreakMode = .byTruncatingMiddle
         titleLabel.stringValue = windowItem.title.isEmpty ? windowItem.appName : windowItem.title
 
         // Text shadow ensures readability over any wallpaper or document
         let textShadow = NSShadow()
-        textShadow.shadowColor = NSColor.black.withAlphaComponent(0.85)
+        textShadow.shadowColor = NSColor.black.withAlphaComponent(0.90)
         textShadow.shadowBlurRadius = 4
         textShadow.shadowOffset = NSSize(width: 0, height: -1)
         titleLabel.shadow = textShadow
@@ -155,23 +155,36 @@ final class WindowCardView: NSView {
     }
 
     func setSelected(_ selected: Bool, animated: Bool = true) {
-        let targetAlpha: CGFloat = selected ? 1.0 : 0.40
-        let titleColor = selected ? NSColor.white : NSColor.white.withAlphaComponent(0.65)
+        let targetThumbnailAlpha: CGFloat = selected ? 1.0 : 0.78
+        let targetBorderWidth: CGFloat = selected ? 2.5 : 1.0
+        let targetBorderColor = selected
+            ? NSColor.controlAccentColor.cgColor
+            : NSColor(white: 0.30, alpha: 0.60).cgColor
+        let titleColor = selected ? NSColor.white : NSColor.white.withAlphaComponent(0.85)
         let titleFont = selected
             ? NSFont.systemFont(ofSize: 11, weight: .semibold)
-            : NSFont.systemFont(ofSize: 11, weight: .regular)
+            : NSFont.systemFont(ofSize: 11, weight: .medium)
+
+        self.alphaValue = 1.0
 
         if animated {
             NSAnimationContext.runAnimationGroup { context in
                 context.duration = 0.12
-                self.animator().alphaValue = targetAlpha
+                self.thumbnailContainer.animator().alphaValue = targetThumbnailAlpha
                 self.titleLabel.textColor = titleColor
                 self.titleLabel.font = titleFont
             }
+            CATransaction.begin()
+            CATransaction.setAnimationDuration(0.12)
+            thumbnailContainer.layer?.borderWidth = targetBorderWidth
+            thumbnailContainer.layer?.borderColor = targetBorderColor
+            CATransaction.commit()
         } else {
-            self.alphaValue = targetAlpha
-            self.titleLabel.textColor = titleColor
-            self.titleLabel.font = titleFont
+            thumbnailContainer.alphaValue = targetThumbnailAlpha
+            thumbnailContainer.layer?.borderWidth = targetBorderWidth
+            thumbnailContainer.layer?.borderColor = targetBorderColor
+            titleLabel.textColor = titleColor
+            titleLabel.font = titleFont
         }
     }
 
