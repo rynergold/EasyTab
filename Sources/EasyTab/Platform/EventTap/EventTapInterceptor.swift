@@ -62,7 +62,7 @@ public final class EventTapInterceptor: @unchecked Sendable {
 
         let callback: CGEventTapCallBack = { proxy, type, event, refcon in
             guard let refcon = refcon else {
-                return Unmanaged.passRetained(event)
+                return Unmanaged.passUnretained(event)
             }
             let interceptor = Unmanaged<EventTapInterceptor>.fromOpaque(refcon).takeUnretainedValue()
             return interceptor.handleEvent(proxy: proxy, type: type, event: event)
@@ -110,11 +110,11 @@ public final class EventTapInterceptor: @unchecked Sendable {
             if let tap = eventTap {
                 CGEvent.tapEnable(tap: tap, enable: true)
             }
-            return Unmanaged.passRetained(event)
+            return Unmanaged.passUnretained(event)
         }
 
         guard let delegate = delegate else {
-            return Unmanaged.passRetained(event)
+            return Unmanaged.passUnretained(event)
         }
 
         let flags = event.flags
@@ -127,7 +127,7 @@ public final class EventTapInterceptor: @unchecked Sendable {
                     delegate.onModifierReleased()
                 }
             }
-            return Unmanaged.passRetained(event)
+            return Unmanaged.passUnretained(event)
         }
 
         // 2. Check for KeyDown events: Command+Tab (keycode 48) & Escape (keycode 53)
@@ -152,6 +152,6 @@ public final class EventTapInterceptor: @unchecked Sendable {
             }
         }
 
-        return Unmanaged.passRetained(event)
+        return Unmanaged.passUnretained(event)
     }
 }
