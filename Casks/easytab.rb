@@ -1,6 +1,6 @@
 cask "easytab" do
-  version "1.0.1"
-  sha256 "b7acc9ed8197fd3038f0c678206a0df8fecb4db5ce46b289a21734827074fbca"
+  version "1.1.0"
+  sha256 "52e13ce559a6bcf5504e5fd69be3cc6557e9c74219cf2dab3ad538b5f8e3ebbb"
 
   url "https://github.com/rynergold/EasyTab/releases/download/v#{version}/EasyTab.zip"
   name "EasyTab"
