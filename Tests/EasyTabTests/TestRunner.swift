@@ -94,6 +94,92 @@ func runAllTests() {
         print("  ✅ Cancel via Escape")
     }
 
+    // 7. Search Toggle & Latching
+    do {
+        let engine = SwitcherEngine()
+        let windows = [
+            WindowItem(id: 1, pid: 101, appName: "Brave Browser", title: "GitHub - rynergold/EasyTab"),
+            WindowItem(id: 2, pid: 102, appName: "Ghostty", title: "zsh - ~/Developer"),
+            WindowItem(id: 3, pid: 103, appName: "Antigravity", title: "EasyTab Workspace")
+        ]
+        _ = engine.handleTab { windows } // index 1 (Ghostty)
+
+        // Toggle Search
+        let searchAction = engine.handleSearchToggle()
+        assertEqual(searchAction, .enterSearch(query: "", selectedIndex: 1, matchedIndices: [0, 1, 2]))
+        assertEqual(engine.state.isSearching, true)
+
+        // Releasing modifier while searching MUST be a no-op (latching open)
+        let releaseAction = engine.handleModifierRelease()
+        assertEqual(releaseAction, .none, "Modifier release in search mode must not dismiss")
+        assertEqual(engine.state.isSearching, true)
+        print("  ✅ Search Mode Activation & Command Latch (Zero Accidental Dismiss)")
+    }
+
+    // 8. Search Typing & Exact Match Resolution
+    do {
+        let engine = SwitcherEngine()
+        let windows = [
+            WindowItem(id: 1, pid: 101, appName: "Brave Browser", title: "GitHub - rynergold/EasyTab"),
+            WindowItem(id: 2, pid: 102, appName: "Ghostty", title: "zsh - ~/Developer"),
+            WindowItem(id: 3, pid: 103, appName: "Antigravity", title: "EasyTab Workspace")
+        ]
+        _ = engine.handleTab { windows }
+        _ = engine.handleSearchToggle()
+
+        // Type 'a' -> should match Antigravity (index 2)
+        _ = engine.handleSearchInput("a")
+        _ = engine.handleSearchInput("n")
+        let matchAction = engine.handleSearchInput("t")
+        assertEqual(matchAction, .updateSearch(query: "ant", selectedIndex: 2, matchedIndices: [2]))
+        assertEqual(engine.state.selectedWindow?.appName, "Antigravity")
+
+        // Press Enter to focus match
+        let enterAction = engine.handleEnter()
+        assertEqual(enterAction, .focusAndDismiss(window: windows[2]))
+        assertEqual(engine.state, .idle)
+        print("  ✅ Real-time Keystroke Search & Enter Confirmation")
+    }
+
+    // 9. Search Tab Cycling Between Multiple Matches
+    do {
+        let engine = SwitcherEngine()
+        let windows = [
+            WindowItem(id: 1, pid: 101, appName: "Brave Browser", title: "Tab 1"),
+            WindowItem(id: 2, pid: 102, appName: "Brave Browser", title: "Tab 2"),
+            WindowItem(id: 3, pid: 103, appName: "Slack", title: "General")
+        ]
+        _ = engine.handleTab { windows }
+        _ = engine.handleSearchToggle()
+
+        _ = engine.handleSearchInput("b")
+        _ = engine.handleSearchInput("r") // Matches indices 0 and 1
+
+        // Tab cycles between match 0 and match 1
+        let tab1 = engine.handleTab { windows }
+        assertEqual(tab1, .updateSearch(query: "br", selectedIndex: 1, matchedIndices: [0, 1]))
+
+        let tab2 = engine.handleTab { windows }
+        assertEqual(tab2, .updateSearch(query: "br", selectedIndex: 0, matchedIndices: [0, 1]))
+        print("  ✅ Tab Cycling Across Filtered Matches")
+    }
+
+    // 10. Search Backspace & Recovery
+    do {
+        let engine = SwitcherEngine()
+        let windows = [
+            WindowItem(id: 1, pid: 101, appName: "Slack", title: "General"),
+            WindowItem(id: 2, pid: 102, appName: "Ghostty", title: "zsh")
+        ]
+        _ = engine.handleTab { windows }
+        _ = engine.handleSearchToggle()
+
+        _ = engine.handleSearchInput("z") // No matches
+        let backAction = engine.handleSearchBackspace()
+        assertEqual(backAction, .updateSearch(query: "", selectedIndex: 0, matchedIndices: [0, 1]))
+        print("  ✅ Backspace & Recovery to Full Window List")
+    }
+
     print("\n🎉 ALL TESTS PASSED SUCCESSFULLY! (0 Failures)\n")
 }
 

@@ -165,8 +165,6 @@ final class WindowCardView: NSView {
             ? NSFont.systemFont(ofSize: 11, weight: .semibold)
             : NSFont.systemFont(ofSize: 11, weight: .medium)
 
-        self.alphaValue = 1.0
-
         if animated {
             NSAnimationContext.runAnimationGroup { context in
                 context.duration = 0.12
@@ -188,6 +186,18 @@ final class WindowCardView: NSView {
         }
     }
 
+    func setDimmed(_ dimmed: Bool, animated: Bool = true) {
+        let targetAlpha: CGFloat = dimmed ? 0.28 : 1.0
+        if animated {
+            NSAnimationContext.runAnimationGroup { context in
+                context.duration = 0.12
+                self.animator().alphaValue = targetAlpha
+            }
+        } else {
+            self.alphaValue = targetAlpha
+        }
+    }
+
     func teardown() {
         isTornDown = true
         thumbnailContainer.layer?.contents = nil
@@ -198,7 +208,7 @@ final class WindowCardView: NSView {
     }
 }
 
-// MARK: - Pure Floating Cards Strip (100% Transparent Container)
+// MARK: - Pure Floating Cards Strip with Inline Search Bar
 
 public final class AppKitSwitcherView: NSView {
     private let windows: [WindowItem]
@@ -206,6 +216,13 @@ public final class AppKitSwitcherView: NSView {
     private var cardViews: [WindowCardView] = []
     private let scrollView = NSScrollView()
     private let cardsContainer = NSView()
+
+    // Search Bar Components
+    private let searchBarContainer = NSView()
+    private let searchIconLabel = NSTextField(labelWithString: "🔍")
+    private let searchQueryLabel = NSTextField(labelWithString: "")
+    private let searchBadgeLabel = NSTextField(labelWithString: "")
+    private(set) var isSearching: Bool = false
 
     public var onWindowClicked: ((WindowItem) -> Void)?
 
@@ -216,10 +233,10 @@ public final class AppKitSwitcherView: NSView {
         self.selectedIndex = selectedIndex
         super.init(frame: .zero)
 
-        // 100% transparent backdrop — zero darkened gray outer container!
         wantsLayer = true
         layer?.backgroundColor = NSColor.clear.cgColor
 
+        buildSearchBarUI()
         buildUI()
         updateSelection(selectedIndex, animated: false)
     }
@@ -228,13 +245,47 @@ public final class AppKitSwitcherView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    private func buildSearchBarUI() {
+        searchBarContainer.wantsLayer = true
+        searchBarContainer.layer?.cornerRadius = 16
+        searchBarContainer.layer?.masksToBounds = true
+        searchBarContainer.layer?.backgroundColor = NSColor(white: 0.14, alpha: 0.98).cgColor
+        searchBarContainer.layer?.borderWidth = 1.5
+        searchBarContainer.layer?.borderColor = NSColor.controlAccentColor.cgColor
+        searchBarContainer.isHidden = true
+
+        let dropShadow = NSShadow()
+        dropShadow.shadowColor = NSColor.black.withAlphaComponent(0.40)
+        dropShadow.shadowBlurRadius = 8
+        dropShadow.shadowOffset = NSSize(width: 0, height: -2)
+        searchBarContainer.shadow = dropShadow
+
+        // Search icon
+        searchIconLabel.font = NSFont.systemFont(ofSize: 13)
+        searchIconLabel.alignment = .center
+        searchBarContainer.addSubview(searchIconLabel)
+
+        // Search text query
+        searchQueryLabel.font = NSFont.systemFont(ofSize: 13, weight: .medium)
+        searchQueryLabel.textColor = .white
+        searchQueryLabel.lineBreakMode = .byTruncatingTail
+        searchBarContainer.addSubview(searchQueryLabel)
+
+        // Match count badge
+        searchBadgeLabel.font = NSFont.systemFont(ofSize: 11, weight: .semibold)
+        searchBadgeLabel.textColor = NSColor.controlAccentColor
+        searchBadgeLabel.alignment = .right
+        searchBarContainer.addSubview(searchBadgeLabel)
+
+        addSubview(searchBarContainer)
+    }
+
     private func buildUI() {
         let cardSpacing: CGFloat = 14
         let cardWidth: CGFloat = 174
         let cardHeight: CGFloat = 136
         let horizontalPadding: CGFloat = 8
 
-        // Horizontal Scroll View
         scrollView.drawsBackground = false
         scrollView.hasHorizontalScroller = false
         scrollView.hasVerticalScroller = false
@@ -246,7 +297,6 @@ public final class AppKitSwitcherView: NSView {
         cardsContainer.frame = NSRect(x: 0, y: 0, width: totalCardsWidth, height: cardHeight)
         scrollView.documentView = cardsContainer
 
-        // Instantly build all floating cards
         for (index, window) in windows.enumerated() {
             let cachedThumb = WindowThumbnailCache.shared.cachedThumbnail(for: window.id)
             let card = WindowCardView(window: window, isSelected: index == selectedIndex, thumbnail: cachedThumb)
@@ -259,7 +309,6 @@ public final class AppKitSwitcherView: NSView {
             cardViews.append(card)
         }
 
-        // Asynchronously stream window previews in priority order (selected window first)
         var captureIndices = [selectedIndex]
         for i in 0..<windows.count {
             if i != selectedIndex {
@@ -281,7 +330,65 @@ public final class AppKitSwitcherView: NSView {
 
     public override func layout() {
         super.layout()
-        scrollView.frame = bounds
+        if isSearching {
+            let barWidth: CGFloat = min(360, max(280, bounds.width - 48))
+            searchBarContainer.frame = NSRect(x: (bounds.width - barWidth) / 2, y: 6, width: barWidth, height: 32)
+            searchIconLabel.frame = NSRect(x: 10, y: 7, width: 18, height: 18)
+            searchQueryLabel.frame = NSRect(x: 34, y: 7, width: barWidth - 120, height: 18)
+            searchBadgeLabel.frame = NSRect(x: barWidth - 84, y: 7, width: 74, height: 18)
+
+            scrollView.frame = NSRect(x: 0, y: 46, width: bounds.width, height: 136)
+        } else {
+            searchBarContainer.frame = .zero
+            scrollView.frame = NSRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
+        }
+    }
+
+    public func enterSearch(query: String, selectedIndex: Int, matchedIndices: [Int]) {
+        self.isSearching = true
+        self.searchBarContainer.isHidden = false
+        needsLayout = true
+        layoutSubtreeIfNeeded()
+        updateSearch(query: query, selectedIndex: selectedIndex, matchedIndices: matchedIndices)
+    }
+
+    public func updateSearch(query: String, selectedIndex: Int, matchedIndices: [Int]) {
+        let hasMatches = !matchedIndices.isEmpty
+
+        // Update search query text & cursor
+        if query.isEmpty {
+            searchQueryLabel.stringValue = "Search open windows..."
+            searchQueryLabel.textColor = NSColor.white.withAlphaComponent(0.45)
+            searchBadgeLabel.stringValue = "\(windows.count) windows"
+            searchBadgeLabel.textColor = NSColor.white.withAlphaComponent(0.55)
+            searchBarContainer.layer?.borderColor = NSColor(white: 0.35, alpha: 0.8).cgColor
+        } else {
+            searchQueryLabel.stringValue = "\(query)|"
+            searchQueryLabel.textColor = .white
+            if hasMatches {
+                searchBadgeLabel.stringValue = "\(matchedIndices.count) match\(matchedIndices.count == 1 ? "" : "es")"
+                searchBadgeLabel.textColor = NSColor.controlAccentColor
+                searchBarContainer.layer?.borderColor = NSColor.controlAccentColor.cgColor
+            } else {
+                searchBadgeLabel.stringValue = "No matches"
+                searchBadgeLabel.textColor = NSColor.systemRed
+                searchBarContainer.layer?.borderColor = NSColor.systemRed.withAlphaComponent(0.85).cgColor
+            }
+        }
+
+        // Highlight matching cards and dim non-matching ones
+        for (index, card) in cardViews.enumerated() {
+            if query.isEmpty {
+                card.setDimmed(false)
+            } else {
+                let isMatch = matchedIndices.contains(index)
+                card.setDimmed(!isMatch)
+            }
+        }
+
+        if selectedIndex >= 0 && selectedIndex < cardViews.count {
+            updateSelection(selectedIndex, animated: true)
+        }
     }
 
     public func updateSelection(_ newIndex: Int, animated: Bool = true) {
@@ -292,7 +399,6 @@ public final class AppKitSwitcherView: NSView {
             card.setSelected(index == newIndex, animated: animated)
         }
 
-        // Center selected card in scroll view
         let targetCard = cardViews[newIndex]
         let cardFrame = targetCard.frame
         let visibleWidth = scrollView.bounds.width
@@ -318,12 +424,13 @@ public final class AppKitSwitcherView: NSView {
         cardViews.removeAll()
     }
 
-    public func calculatePreferredSize() -> NSSize {
+    public func calculatePreferredSize(isSearching: Bool = false) -> NSSize {
         let cardWidth: CGFloat = 174
         let cardSpacing: CGFloat = 14
         let horizontalPadding: CGFloat = 8
         let totalCardsWidth = horizontalPadding * 2 + CGFloat(windows.count) * cardWidth + CGFloat(max(0, windows.count - 1)) * cardSpacing
         let preferredWidth = min(max(totalCardsWidth, 380), 1080)
-        return NSSize(width: preferredWidth, height: 144)
+        let preferredHeight: CGFloat = isSearching ? 188 : 144
+        return NSSize(width: preferredWidth, height: preferredHeight)
     }
 }
