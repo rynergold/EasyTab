@@ -1,6 +1,22 @@
-# ⚡ EasyTab
+<div align="center">
 
-> Default macOS `Cmd + Tab` only switches between **Applications**, not individual **Windows**. 
+<img src="assets/AppIcon_1024.png" alt="EasyTab Icon" width="128">
+
+# EasyTab
+
+**Fast, lightweight Command+Tab window switcher for macOS.**
+
+Default macOS `Cmd + Tab` only switches between **Applications**, not individual **Windows**.
+
+[![Checks](https://github.com/rynergold/EasyTab/actions/workflows/ci.yml/badge.svg)](https://github.com/rynergold/EasyTab/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/rynergold/EasyTab?color=orange)](https://github.com/rynergold/EasyTab/releases)
+[![Platform: macOS](https://img.shields.io/badge/platform-macOS-0078D4)](https://github.com/rynergold/EasyTab)
+[![Homebrew](https://img.shields.io/badge/homebrew-cask-FBB040?logo=homebrew&logoColor=white)](Casks/easytab.rb)
+
+[Why EasyTab](#-why-easytab) · [Features & Controls](#-features--controls) · [Installation](#-installation) · [Contributing](CONTRIBUTING.md) · [License](#-license--legal-notice)
+
+</div>
 
 ---
 
@@ -19,6 +35,8 @@
 | :--- | :--- |
 | `⌘ Cmd + Tab` | Open switcher / cycle forward to next window (MRU order) |
 | `Release ⌘ Cmd` | Instantly focus & raise selected window |
+| `S` | Instant window search (filter by app name or window title) |
+| `Enter` / `Release ⌘` | Confirm selected search result |
 | `Esc` | Cancel switcher without changing window |
 
 
