@@ -120,21 +120,21 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(1.28);
+    transform: translate(-50%, -50%) scale(1.18);
     display: flex;
     flex-direction: column;
     align-items: center;
     z-index: 100;
   }
 
-  /* Option 1 "Ready" Search Pill */
+  /* Spotlight Search Pill */
   .search-pill-container {
-    width: 320px;
-    height: 38px;
-    background: rgba(24, 26, 32, 0.95);
+    width: 340px;
+    height: 36px;
+    background: rgba(24, 26, 32, 0.96);
     backdrop-filter: blur(28px) saturate(190%);
     border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 19px;
+    border-radius: 18px;
     display: flex;
     align-items: center;
     padding: 0 14px;
@@ -146,8 +146,10 @@
   }
 
   .search-pill-icon {
-    font-size: 14px;
-    opacity: 0.88;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.70);
   }
 
   .search-pill-text {
@@ -162,36 +164,35 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 3px 8px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.08) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.24);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    width: 22px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
     border-radius: 5px;
     font-size: 11px;
     font-weight: 700;
     color: rgba(255, 255, 255, 0.92);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   }
 
   /* Cards Carousel Strip */
   .cards-strip {
     display: flex;
-    gap: 18px;
+    gap: 14px;
     align-items: flex-start;
   }
 
   /* Individual Window Preview Card */
   .window-card {
-    width: 178px;
+    width: 216px;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
   .card-thumbnail-box {
-    width: 174px;
-    height: 108px;
+    width: 212px;
+    height: 136px;
     border-radius: 10px;
     background: rgba(28, 30, 38, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.22);
@@ -207,11 +208,11 @@
   }
 
   .card-app-name {
-    font-size: 14.5px;
+    font-size: 15.5px;
     font-weight: 600;
     color: rgba(255, 255, 255, 0.92);
     text-align: center;
-    padding: 0 12px;
+    padding: 0 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -241,7 +242,7 @@
     font-weight: 500;
     color: rgba(255, 255, 255, 0.85);
     text-align: center;
-    width: 174px;
+    width: 212px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -411,9 +412,13 @@
 
   <!-- EasyTab HUD (Front & Center) -->
   <div class="easytab-hud">
-    <!-- Option 1 Ready Search Pill -->
+    <!-- Spotlight Search Pill -->
     <div class="search-pill-container">
-      <span class="search-pill-icon">🔍</span>
+      <span class="search-pill-icon">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" fill="currentColor"/>
+        </svg>
+      </span>
       <span class="search-pill-text">Search open windows...</span>
       <div class="search-pill-keycap">S</div>
     </div>

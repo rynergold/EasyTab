@@ -67,7 +67,44 @@ public final class WindowThumbnailCache: @unchecked Sendable {
     }
 }
 
-// MARK: - Clean Floating Window Preview Card (Zero Outer Box)
+// MARK: - Physical Keyboard Keycap Badge View
+
+final class KeycapBadgeView: NSView {
+    private let label = NSTextField(labelWithString: "S")
+
+    override var isFlipped: Bool { true }
+
+    override init(frame: NSRect) {
+        super.init(frame: frame)
+        wantsLayer = true
+        layer?.cornerRadius = 5
+        layer?.masksToBounds = true
+        layer?.backgroundColor = NSColor(white: 1.0, alpha: 0.12).cgColor
+        layer?.borderWidth = 1.0
+        layer?.borderColor = NSColor(white: 1.0, alpha: 0.22).cgColor
+
+        if let descriptor = NSFont.systemFont(ofSize: 11, weight: .bold).fontDescriptor.withDesign(.rounded),
+           let roundedFont = NSFont(descriptor: descriptor, size: 11) {
+            label.font = roundedFont
+        } else {
+            label.font = NSFont.systemFont(ofSize: 11, weight: .bold)
+        }
+        label.textColor = NSColor.white.withAlphaComponent(0.92)
+        label.alignment = .center
+        addSubview(label)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layout() {
+        super.layout()
+        label.frame = NSRect(x: 0, y: (bounds.height - 15) / 2, width: bounds.width, height: 15)
+    }
+}
+
+// MARK: - Clean Floating Window Preview Card (Large Format, 5-Per-Row)
 
 final class WindowCardView: NSView {
     let windowItem: WindowItem
@@ -82,7 +119,7 @@ final class WindowCardView: NSView {
 
     init(window: WindowItem, isSelected: Bool, thumbnail: CGImage?) {
         self.windowItem = window
-        super.init(frame: NSRect(x: 0, y: 0, width: 174, height: 136))
+        super.init(frame: NSRect(x: 0, y: 0, width: 216, height: 168))
 
         wantsLayer = true
         setupThumbnailArea(thumbnail: thumbnail)
@@ -95,27 +132,20 @@ final class WindowCardView: NSView {
     }
 
     private func setupThumbnailArea(thumbnail: CGImage?) {
-        thumbnailContainer.frame = NSRect(x: 2, y: 2, width: 170, height: 105)
+        thumbnailContainer.frame = NSRect(x: 2, y: 2, width: 212, height: 136)
         thumbnailContainer.wantsLayer = true
         thumbnailContainer.layer?.cornerRadius = 10
         thumbnailContainer.layer?.masksToBounds = true
         thumbnailContainer.layer?.backgroundColor = NSColor(white: 0.12, alpha: 0.95).cgColor
         thumbnailContainer.layer?.borderWidth = 1.0
-        thumbnailContainer.layer?.borderColor = NSColor(white: 0.30, alpha: 0.60).cgColor
-
-        // Floating card drop shadow
-        let dropShadow = NSShadow()
-        dropShadow.shadowColor = NSColor.black.withAlphaComponent(0.50)
-        dropShadow.shadowBlurRadius = 10
-        dropShadow.shadowOffset = NSSize(width: 0, height: -4)
-        self.shadow = dropShadow
+        thumbnailContainer.layer?.borderColor = NSColor(white: 0.32, alpha: 0.65).cgColor
 
         addSubview(thumbnailContainer)
 
-        // Loading placeholder label (app name) while texture streams in
-        placeholderLabel.frame = NSRect(x: 10, y: 40, width: 150, height: 24)
-        placeholderLabel.font = NSFont.systemFont(ofSize: 13, weight: .semibold)
-        placeholderLabel.textColor = NSColor.white.withAlphaComponent(0.90)
+        // Loading placeholder label (app name) centered cleanly inside the card box
+        placeholderLabel.frame = NSRect(x: 10, y: 55, width: 192, height: 26)
+        placeholderLabel.font = NSFont.systemFont(ofSize: 15, weight: .semibold)
+        placeholderLabel.textColor = NSColor.white.withAlphaComponent(0.92)
         placeholderLabel.alignment = .center
         placeholderLabel.lineBreakMode = .byTruncatingTail
         placeholderLabel.stringValue = windowItem.appName
@@ -127,16 +157,16 @@ final class WindowCardView: NSView {
     }
 
     private func setupTitle() {
-        titleLabel.frame = NSRect(x: 2, y: 114, width: 170, height: 18)
-        titleLabel.font = NSFont.systemFont(ofSize: 11, weight: .medium)
+        titleLabel.frame = NSRect(x: 2, y: 144, width: 212, height: 20)
+        titleLabel.font = NSFont.systemFont(ofSize: 11.5, weight: .medium)
         titleLabel.textColor = NSColor.white.withAlphaComponent(0.85)
         titleLabel.alignment = .center
         titleLabel.lineBreakMode = .byTruncatingMiddle
         titleLabel.stringValue = windowItem.title.isEmpty ? windowItem.appName : windowItem.title
 
-        // Text shadow ensures readability over any wallpaper or document
+        // Text shadow ensures readability over any background
         let textShadow = NSShadow()
-        textShadow.shadowColor = NSColor.black.withAlphaComponent(0.90)
+        textShadow.shadowColor = NSColor.black.withAlphaComponent(0.95)
         textShadow.shadowBlurRadius = 4
         textShadow.shadowOffset = NSSize(width: 0, height: -1)
         titleLabel.shadow = textShadow
@@ -159,11 +189,24 @@ final class WindowCardView: NSView {
         let targetBorderWidth: CGFloat = selected ? 2.5 : 1.0
         let targetBorderColor = selected
             ? NSColor.controlAccentColor.cgColor
-            : NSColor(white: 0.30, alpha: 0.60).cgColor
+            : NSColor(white: 0.32, alpha: 0.65).cgColor
         let titleColor = selected ? NSColor.white : NSColor.white.withAlphaComponent(0.85)
         let titleFont = selected
-            ? NSFont.systemFont(ofSize: 11, weight: .semibold)
-            : NSFont.systemFont(ofSize: 11, weight: .medium)
+            ? NSFont.systemFont(ofSize: 11.5, weight: .semibold)
+            : NSFont.systemFont(ofSize: 11.5, weight: .medium)
+
+        // Selected card gets a subtle macOS accent glow halo
+        let cardShadow = NSShadow()
+        if selected {
+            cardShadow.shadowColor = NSColor.controlAccentColor.withAlphaComponent(0.40)
+            cardShadow.shadowBlurRadius = 18
+            cardShadow.shadowOffset = NSSize(width: 0, height: -4)
+        } else {
+            cardShadow.shadowColor = NSColor.black.withAlphaComponent(0.55)
+            cardShadow.shadowBlurRadius = 12
+            cardShadow.shadowOffset = NSSize(width: 0, height: -4)
+        }
+        self.shadow = cardShadow
 
         if animated {
             NSAnimationContext.runAnimationGroup { context in
@@ -208,19 +251,26 @@ final class WindowCardView: NSView {
     }
 }
 
-// MARK: - Pure Floating Cards Strip with Inline Search Bar
+// MARK: - Flipped Container View for Multi-Row Grid Layout
+
+final class FlippedContainerView: NSView {
+    override var isFlipped: Bool { true }
+}
+
+// MARK: - Pure Floating Cards Strip with Spotlight-Styled Search Bar & Multi-Row Grid
 
 public final class AppKitSwitcherView: NSView {
     private let windows: [WindowItem]
     private var selectedIndex: Int
     private var cardViews: [WindowCardView] = []
     private let scrollView = NSScrollView()
-    private let cardsContainer = NSView()
+    private let cardsContainer = FlippedContainerView()
 
-    // Search Bar Components
+    // Spotlight-Style Search Bar Components
     private let searchBarContainer = NSView()
-    private let searchIconLabel = NSTextField(labelWithString: "🔍")
+    private let searchImageView = NSImageView()
     private let searchQueryLabel = NSTextField(labelWithString: "")
+    private let keycapView = KeycapBadgeView(frame: NSRect(x: 0, y: 0, width: 22, height: 22))
     private let searchBadgeLabel = NSTextField(labelWithString: "")
     private(set) var isSearching: Bool = false
 
@@ -246,47 +296,57 @@ public final class AppKitSwitcherView: NSView {
     }
 
     private func buildSearchBarUI() {
+        // Spotlight pill container
         searchBarContainer.wantsLayer = true
-        searchBarContainer.layer?.cornerRadius = 16
+        searchBarContainer.layer?.cornerRadius = 18 // Perfect 36pt pill capsule
         searchBarContainer.layer?.masksToBounds = true
-        searchBarContainer.layer?.backgroundColor = NSColor(white: 0.14, alpha: 0.98).cgColor
+        searchBarContainer.layer?.backgroundColor = NSColor(white: 0.14, alpha: 0.96).cgColor
         searchBarContainer.layer?.borderWidth = 1.0
-        searchBarContainer.layer?.borderColor = NSColor(white: 0.28, alpha: 0.70).cgColor
-        searchBarContainer.isHidden = false // Option 1: always visible with [ S ] hint!
+        searchBarContainer.layer?.borderColor = NSColor(white: 0.30, alpha: 0.70).cgColor
 
         let dropShadow = NSShadow()
-        dropShadow.shadowColor = NSColor.black.withAlphaComponent(0.40)
-        dropShadow.shadowBlurRadius = 8
-        dropShadow.shadowOffset = NSSize(width: 0, height: -2)
+        dropShadow.shadowColor = NSColor.black.withAlphaComponent(0.45)
+        dropShadow.shadowBlurRadius = 12
+        dropShadow.shadowOffset = NSSize(width: 0, height: -3)
         searchBarContainer.shadow = dropShadow
 
-        // Search icon
-        searchIconLabel.font = NSFont.systemFont(ofSize: 13)
-        searchIconLabel.alignment = .center
-        searchBarContainer.addSubview(searchIconLabel)
+        // Native SF Symbol Magnifying Glass (0 KB external download)
+        let config = NSImage.SymbolConfiguration(pointSize: 13, weight: .medium)
+        searchImageView.image = NSImage(systemSymbolName: "magnifyingglass", accessibilityDescription: "Search")?.withSymbolConfiguration(config)
+        searchImageView.contentTintColor = NSColor.white.withAlphaComponent(0.65)
+        searchImageView.imageScaling = .scaleProportionallyDown
+        searchBarContainer.addSubview(searchImageView)
 
-        // Search text query
-        searchQueryLabel.font = NSFont.systemFont(ofSize: 12.5, weight: .medium)
-        searchQueryLabel.textColor = NSColor.white.withAlphaComponent(0.45)
+        // Search text query / placeholder
+        searchQueryLabel.font = NSFont.systemFont(ofSize: 13, weight: .regular)
+        searchQueryLabel.textColor = NSColor.white.withAlphaComponent(0.48)
         searchQueryLabel.stringValue = "Search open windows..."
         searchQueryLabel.lineBreakMode = .byTruncatingTail
         searchBarContainer.addSubview(searchQueryLabel)
 
-        // Match count badge / [ S ] keycap
+        // Clear [ S ] Keycap Badge
+        searchBarContainer.addSubview(keycapView)
+
+        // Match count badge (shown when actively searching)
         searchBadgeLabel.font = NSFont.systemFont(ofSize: 11, weight: .semibold)
-        searchBadgeLabel.textColor = NSColor.white.withAlphaComponent(0.60)
-        searchBadgeLabel.stringValue = "[ S ]"
+        searchBadgeLabel.textColor = NSColor.controlAccentColor
+        searchBadgeLabel.stringValue = ""
         searchBadgeLabel.alignment = .right
+        searchBadgeLabel.isHidden = true
         searchBarContainer.addSubview(searchBadgeLabel)
 
         addSubview(searchBarContainer)
     }
 
     private func buildUI() {
+        let cardWidth: CGFloat = 216
+        let cardHeight: CGFloat = 168
         let cardSpacing: CGFloat = 14
-        let cardWidth: CGFloat = 174
-        let cardHeight: CGFloat = 136
-        let horizontalPadding: CGFloat = 8
+        let rowSpacing: CGFloat = 14
+        let horizontalPadding: CGFloat = 12
+
+        let columns = min(max(windows.count, 1), 5)
+        let rows = Int(ceil(Double(windows.count) / 5.0))
 
         scrollView.drawsBackground = false
         scrollView.hasHorizontalScroller = false
@@ -295,15 +355,22 @@ public final class AppKitSwitcherView: NSView {
         scrollView.verticalScrollElasticity = .none
         addSubview(scrollView)
 
-        let totalCardsWidth = horizontalPadding * 2 + CGFloat(windows.count) * cardWidth + CGFloat(max(0, windows.count - 1)) * cardSpacing
-        cardsContainer.frame = NSRect(x: 0, y: 0, width: totalCardsWidth, height: cardHeight)
+        let totalGridWidth = horizontalPadding * 2 + CGFloat(columns) * cardWidth + CGFloat(max(0, columns - 1)) * cardSpacing
+        let totalGridHeight = CGFloat(rows) * cardHeight + CGFloat(max(0, rows - 1)) * rowSpacing
+        cardsContainer.frame = NSRect(x: 0, y: 0, width: totalGridWidth, height: totalGridHeight)
         scrollView.documentView = cardsContainer
 
+        // Lay out cards in a 5-per-row grid
         for (index, window) in windows.enumerated() {
             let cachedThumb = WindowThumbnailCache.shared.cachedThumbnail(for: window.id)
             let card = WindowCardView(window: window, isSelected: index == selectedIndex, thumbnail: cachedThumb)
-            let cardX = horizontalPadding + CGFloat(index) * (cardWidth + cardSpacing)
-            card.frame = NSRect(x: cardX, y: 0, width: cardWidth, height: cardHeight)
+
+            let col = index % 5
+            let row = index / 5
+            let cardX = horizontalPadding + CGFloat(col) * (cardWidth + cardSpacing)
+            let cardY = CGFloat(row) * (cardHeight + rowSpacing)
+
+            card.frame = NSRect(x: cardX, y: cardY, width: cardWidth, height: cardHeight)
             card.onSelect = { [weak self] selectedWin in
                 self?.onWindowClicked?(selectedWin)
             }
@@ -311,6 +378,7 @@ public final class AppKitSwitcherView: NSView {
             cardViews.append(card)
         }
 
+        // Pre-stream textures in priority order (selected window first)
         var captureIndices = [selectedIndex]
         for i in 0..<windows.count {
             if i != selectedIndex {
@@ -332,19 +400,24 @@ public final class AppKitSwitcherView: NSView {
 
     public override func layout() {
         super.layout()
-        let barWidth: CGFloat = min(340, max(280, bounds.width - 48))
-        searchBarContainer.frame = NSRect(x: (bounds.width - barWidth) / 2, y: 6, width: barWidth, height: 32)
-        searchIconLabel.frame = NSRect(x: 10, y: 7, width: 18, height: 18)
-        searchQueryLabel.frame = NSRect(x: 34, y: 7, width: barWidth - 110, height: 18)
-        searchBadgeLabel.frame = NSRect(x: barWidth - 68, y: 7, width: 58, height: 18)
+        let barWidth: CGFloat = min(360, max(300, bounds.width - 64))
+        searchBarContainer.frame = NSRect(x: (bounds.width - barWidth) / 2, y: 8, width: barWidth, height: 36)
+        searchImageView.frame = NSRect(x: 12, y: 10, width: 16, height: 16)
+        searchQueryLabel.frame = NSRect(x: 36, y: 9, width: barWidth - 110, height: 18)
+        keycapView.frame = NSRect(x: barWidth - 32, y: 7, width: 22, height: 22)
+        searchBadgeLabel.frame = NSRect(x: barWidth - 95, y: 9, width: 85, height: 18)
 
-        scrollView.frame = NSRect(x: 0, y: 46, width: bounds.width, height: 136)
+        let scrollY: CGFloat = 56
+        let scrollHeight = max(0, bounds.height - scrollY)
+        scrollView.frame = NSRect(x: 0, y: scrollY, width: bounds.width, height: scrollHeight)
     }
 
     public func enterSearch(query: String, selectedIndex: Int, matchedIndices: [Int]) {
         self.isSearching = true
         searchBarContainer.layer?.borderColor = NSColor.controlAccentColor.cgColor
         searchBarContainer.layer?.borderWidth = 1.5
+        keycapView.isHidden = true
+        searchBadgeLabel.isHidden = false
         updateSearch(query: query, selectedIndex: selectedIndex, matchedIndices: matchedIndices)
     }
 
@@ -395,21 +468,23 @@ public final class AppKitSwitcherView: NSView {
             card.setSelected(index == newIndex, animated: animated)
         }
 
-        let targetCard = cardViews[newIndex]
-        let cardFrame = targetCard.frame
-        let visibleWidth = scrollView.bounds.width
-        guard visibleWidth > 0 else { return }
+        // Auto-scroll vertically if grid exceeds visible rows
+        let cardHeight: CGFloat = 168
+        let rowSpacing: CGFloat = 14
+        let targetRow = newIndex / 5
+        let visibleHeight = scrollView.bounds.height
+        guard visibleHeight > 0 else { return }
 
-        let targetX = max(0, min(cardFrame.midX - (visibleWidth / 2), cardsContainer.bounds.width - visibleWidth))
+        let targetY = max(0, min(CGFloat(targetRow) * (cardHeight + rowSpacing), cardsContainer.bounds.height - visibleHeight))
 
         if animated {
             NSAnimationContext.runAnimationGroup { context in
                 context.duration = 0.16
                 context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-                self.scrollView.contentView.animator().setBoundsOrigin(NSPoint(x: targetX, y: 0))
+                self.scrollView.contentView.animator().setBoundsOrigin(NSPoint(x: 0, y: targetY))
             }
         } else {
-            scrollView.contentView.setBoundsOrigin(NSPoint(x: targetX, y: 0))
+            scrollView.contentView.setBoundsOrigin(NSPoint(x: 0, y: targetY))
         }
     }
 
@@ -421,11 +496,24 @@ public final class AppKitSwitcherView: NSView {
     }
 
     public func calculatePreferredSize() -> NSSize {
-        let cardWidth: CGFloat = 174
+        let cardWidth: CGFloat = 216
+        let cardHeight: CGFloat = 168
         let cardSpacing: CGFloat = 14
-        let horizontalPadding: CGFloat = 8
-        let totalCardsWidth = horizontalPadding * 2 + CGFloat(windows.count) * cardWidth + CGFloat(max(0, windows.count - 1)) * cardSpacing
-        let preferredWidth = min(max(totalCardsWidth, 380), 1080)
-        return NSSize(width: preferredWidth, height: 188)
+        let rowSpacing: CGFloat = 14
+        let horizontalPadding: CGFloat = 12
+
+        let columns = min(max(windows.count, 1), 5)
+        let rows = min(max(Int(ceil(Double(windows.count) / 5.0)), 1), 2)
+
+        let totalWidth = horizontalPadding * 2 + CGFloat(columns) * cardWidth + CGFloat(max(0, columns - 1)) * cardSpacing
+        let totalGridHeight = CGFloat(rows) * cardHeight + CGFloat(max(0, rows - 1)) * rowSpacing
+
+        let searchBarHeight: CGFloat = 36
+        let searchMarginBottom: CGFloat = 16
+        let topPadding: CGFloat = 8
+        let bottomPadding: CGFloat = 12
+        let totalHeight = topPadding + searchBarHeight + searchMarginBottom + totalGridHeight + bottomPadding
+
+        return NSSize(width: max(totalWidth, 360), height: totalHeight)
     }
 }
