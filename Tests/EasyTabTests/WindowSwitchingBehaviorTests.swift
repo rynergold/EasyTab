@@ -1,8 +1,8 @@
 import Testing
 @testable import EasyTab
 
-@Suite("SwitcherEngine State Machine Tests")
-struct SwitcherEngineTests {
+@Suite("WindowSwitchingBehaviorTests")
+struct WindowSwitchingBehaviorTests {
 
     private func makeSampleWindows(count: Int) -> [WindowItem] {
         return (0..<count).map { i in
