@@ -16,46 +16,61 @@
     overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", sans-serif;
     position: relative;
-    background: #090b10;
+    background: #06070a;
     user-select: none;
   }
 
-  /* macOS Sonoma / Sequoia Dynamic Dark Desktop Wallpaper */
+  /* ========================================================= */
+  /* Antigravity Deep Space Cosmic Wallpaper                  */
+  /* ========================================================= */
   .wallpaper {
     position: absolute;
     inset: 0;
     background: 
-      radial-gradient(circle at 50% 110%, rgba(37, 99, 235, 0.55) 0%, transparent 55%),
-      radial-gradient(circle at 18% 28%, rgba(99, 102, 241, 0.40) 0%, transparent 48%),
-      radial-gradient(circle at 82% 22%, rgba(168, 85, 247, 0.35) 0%, transparent 45%),
-      radial-gradient(circle at 50% 35%, #0f172a 0%, #06080c 100%);
+      radial-gradient(ellipse at 50% 105%, rgba(30, 58, 138, 0.75) 0%, transparent 60%),
+      radial-gradient(circle at 80% 25%, rgba(139, 92, 246, 0.35) 0%, transparent 50%),
+      radial-gradient(circle at 18% 35%, rgba(56, 189, 248, 0.25) 0%, transparent 45%),
+      radial-gradient(circle at 50% 30%, #0d111a 0%, #06070a 100%);
   }
 
-  .wallpaper-mesh {
+  /* Gravitational Orbital Waves / Celestial Curvature */
+  .orbital-rings {
     position: absolute;
     inset: 0;
     background-image: 
-      radial-gradient(ellipse at 40% 65%, rgba(56, 189, 248, 0.16), transparent 55%),
-      radial-gradient(ellipse at 65% 75%, rgba(192, 132, 252, 0.18), transparent 50%);
-    filter: blur(50px);
+      radial-gradient(circle at 50% 50%, transparent 380px, rgba(99, 102, 241, 0.08) 381px, transparent 383px),
+      radial-gradient(circle at 50% 50%, transparent 580px, rgba(56, 189, 248, 0.06) 581px, transparent 584px),
+      radial-gradient(circle at 50% 50%, transparent 780px, rgba(168, 85, 247, 0.05) 781px, transparent 784px);
   }
 
-  /* macOS Menu Bar */
+  .cosmic-nebula {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 35% 65%, rgba(79, 70, 229, 0.18), transparent 60%),
+      radial-gradient(ellipse at 65% 75%, rgba(236, 72, 153, 0.12), transparent 50%),
+      radial-gradient(ellipse at 50% 45%, rgba(56, 189, 248, 0.14), transparent 55%);
+    filter: blur(60px);
+  }
+
+  /* ========================================================= */
+  /* Real macOS Menu Bar (Pixel-Matched to User's Actual Bar)  */
+  /* ========================================================= */
   .menu-bar {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 32px;
-    background: rgba(18, 20, 26, 0.72);
+    height: 28px;
+    background: rgba(14, 16, 21, 0.88);
     backdrop-filter: blur(32px) saturate(180%);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 18px;
-    font-size: 13.5px;
-    color: rgba(255, 255, 255, 0.92);
+    padding: 0 16px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.90);
     font-weight: 500;
     z-index: 10;
   }
@@ -63,172 +78,49 @@
   .menu-left {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
   }
 
   .apple-logo {
-    font-size: 16px;
-    margin-right: -4px;
+    font-size: 15px;
+    margin-right: -2px;
     color: #ffffff;
   }
 
   .app-name {
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .menu-right {
     display: flex;
     align-items: center;
-    gap: 18px;
-    font-size: 12.5px;
+    gap: 16px;
     color: rgba(255, 255, 255, 0.88);
   }
 
-  .easytab-icon-status {
+  .menu-icon-svg {
     display: flex;
     align-items: center;
-    gap: 4px;
-    color: #38bdf8;
-    font-weight: 700;
-    font-size: 13px;
-    background: rgba(56, 189, 248, 0.12);
-    padding: 2px 8px;
-    border-radius: 6px;
-    border: 1px solid rgba(56, 189, 248, 0.25);
+    justify-content: center;
+    opacity: 0.88;
   }
 
-  /* Background Desktop Windows (Natural Desktop Atmosphere) */
-  .desktop-backdrop {
-    position: absolute;
-    inset: 32px 0 0 0;
-    overflow: hidden;
-  }
-
-  .bg-window {
-    position: absolute;
-    border-radius: 12px;
-    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.65), 0 2px 8px rgba(0, 0, 0, 0.4);
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.13);
-  }
-
-  /* Window 1: Code Editor (Ghostty / Zed / VS Code) */
-  .window-code {
-    top: 40px;
-    left: 70px;
-    width: 900px;
-    height: 680px;
-    background: #12141a;
-  }
-
-  .traffic-lights {
-    display: flex;
-    gap: 7px;
-  }
-
-  .traffic-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-  }
-
-  .dot-red { background: #ff5f56; }
-  .dot-yellow { background: #ffbd2e; }
-  .dot-green { background: #27c93f; }
-
-  .window-titlebar {
-    height: 38px;
-    background: #181a22;
-    display: flex;
-    align-items: center;
-    padding: 0 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-    position: relative;
-  }
-
-  .window-title-text {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+  .menu-clock {
     font-size: 12.5px;
-    color: rgba(255, 255, 255, 0.65);
     font-weight: 500;
-  }
-
-  .code-body {
-    padding: 24px;
-    font-family: "SF Mono", Menlo, Monaco, Consolas, monospace;
-    font-size: 13.5px;
-    line-height: 1.65;
-    color: #e2e8f0;
-  }
-
-  .code-kw { color: #f472b6; font-weight: 600; }
-  .code-type { color: #38bdf8; }
-  .code-func { color: #60a5fa; }
-  .code-str { color: #a7f3d0; }
-  .code-comment { color: #64748b; font-style: italic; }
-
-  /* Window 2: Browser Window */
-  .window-browser {
-    top: 75px;
-    right: 70px;
-    width: 920px;
-    height: 700px;
-    background: #16181f;
-  }
-
-  .browser-tabbar {
-    height: 44px;
-    background: #111317;
-    display: flex;
-    align-items: center;
-    padding: 0 14px;
-    gap: 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  }
-
-  .browser-tab {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #1c1e26;
-    padding: 7px 16px;
-    border-radius: 8px;
-    font-size: 12.5px;
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .browser-addressbar {
-    margin: 10px 18px;
-    height: 32px;
-    background: #20232c;
-    border-radius: 7px;
-    display: flex;
-    align-items: center;
-    padding: 0 14px;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.65);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-  }
-
-  /* Subtle Vignette on Desktop */
-  .desktop-dim {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.32);
-    backdrop-filter: blur(2px);
+    letter-spacing: -0.1px;
+    margin-left: 2px;
+    color: rgba(255, 255, 255, 0.92);
   }
 
   /* ========================================================= */
-  /* EasyTab HUD OVERLAY (Prominent Hero Scale)               */
+  /* EasyTab HUD OVERLAY (Front & Center Hero)                 */
   /* ========================================================= */
   .easytab-hud {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(1.22);
+    transform: translate(-50%, -50%) scale(1.28);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -239,7 +131,7 @@
   .search-pill-container {
     width: 320px;
     height: 38px;
-    background: rgba(24, 26, 32, 0.96);
+    background: rgba(24, 26, 32, 0.95);
     backdrop-filter: blur(28px) saturate(190%);
     border: 1px solid rgba(255, 255, 255, 0.22);
     border-radius: 19px;
@@ -248,20 +140,20 @@
     padding: 0 14px;
     gap: 10px;
     box-shadow: 
-      0 12px 28px rgba(0, 0, 0, 0.55),
+      0 12px 30px rgba(0, 0, 0, 0.60),
       0 2px 6px rgba(0, 0, 0, 0.35);
     margin-bottom: 22px;
   }
 
   .search-pill-icon {
     font-size: 14px;
-    opacity: 0.9;
+    opacity: 0.88;
   }
 
   .search-pill-text {
     flex: 1;
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.50);
+    color: rgba(255, 255, 255, 0.48);
     font-weight: 400;
     letter-spacing: -0.1px;
   }
@@ -271,11 +163,11 @@
     align-items: center;
     justify-content: center;
     padding: 3px 8px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.09) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.08) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 5px;
-    font-size: 11.5px;
+    font-size: 11px;
     font-weight: 700;
     color: rgba(255, 255, 255, 0.92);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
@@ -301,24 +193,24 @@
     width: 174px;
     height: 108px;
     border-radius: 10px;
-    background: #1c1f26;
+    background: #181b22;
     border: 1px solid rgba(255, 255, 255, 0.20);
     box-shadow: 
-      0 16px 36px rgba(0, 0, 0, 0.65), 
+      0 16px 38px rgba(0, 0, 0, 0.70), 
       0 2px 6px rgba(0, 0, 0, 0.35);
     overflow: hidden;
     position: relative;
     opacity: 0.80;
   }
 
-  /* SELECTED CARD: Radiant Accent Border & Glow */
+  /* SELECTED CARD: macOS Accent Border & Glow */
   .window-card.selected .card-thumbnail-box {
     border: 2.5px solid #007aff;
     opacity: 1.0;
     box-shadow: 
       0 0 0 1px rgba(0, 122, 255, 0.4),
       0 0 28px rgba(0, 122, 255, 0.50),
-      0 22px 46px rgba(0, 0, 0, 0.80);
+      0 22px 48px rgba(0, 0, 0, 0.85);
     transform: translateY(-2px);
   }
 
@@ -369,6 +261,10 @@
     border-radius: 50%;
   }
 
+  .dot-red { background: #ff5f56; }
+  .dot-yellow { background: #ffbd2e; }
+  .dot-green { background: #27c93f; }
+
   .mini-terminal {
     background: #0d0f14;
     color: #38bdf8;
@@ -392,11 +288,30 @@
     gap: 3px;
   }
 
-  .mini-code-editor {
-    background: #171920;
-    font-family: monospace;
-    padding: 7px;
-    color: #e2e8f0;
+  .mini-antigravity {
+    background: #0f1117;
+    color: #cbd5e1;
+  }
+
+  .mini-ag-sidebar {
+    display: flex;
+    gap: 4px;
+    height: 100%;
+  }
+
+  .mini-ag-left {
+    width: 32px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 4px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .mini-ag-main {
+    flex: 1;
+    padding: 2px 4px;
   }
 
   .mini-slack {
@@ -416,34 +331,39 @@
     gap: 4px;
   }
 
-  /* macOS Dock at bottom */
+  /* ========================================================= */
+  /* macOS Dock with REAL HIGH-RESOLUTION APP ICONS            */
+  /* ========================================================= */
   .dock-container {
     position: absolute;
     bottom: 12px;
     left: 50%;
     transform: translateX(-50%);
-    height: 66px;
-    padding: 0 14px;
-    background: rgba(20, 23, 30, 0.60);
-    backdrop-filter: blur(30px) saturate(180%);
+    height: 68px;
+    padding: 0 16px;
+    background: rgba(20, 23, 30, 0.55);
+    backdrop-filter: blur(32px) saturate(190%);
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+    gap: 14px;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.60);
   }
 
-  .dock-icon {
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  .dock-item {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .dock-app-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+    transition: transform 0.15s ease;
   }
 
   .dock-dot {
@@ -452,17 +372,18 @@
     width: 4px;
     height: 4px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.88);
   }
 </style>
 </head>
 <body>
 
-  <!-- Dynamic Dark Wallpaper -->
+  <!-- Antigravity Deep Cosmic Wallpaper -->
   <div class="wallpaper"></div>
-  <div class="wallpaper-mesh"></div>
+  <div class="orbital-rings"></div>
+  <div class="cosmic-nebula"></div>
 
-  <!-- macOS Menu Bar -->
+  <!-- Real macOS Menu Bar (Pixel-Matched to User's Uploaded Menu Bar) -->
   <div class="menu-bar">
     <div class="menu-left">
       <span class="apple-logo"></span>
@@ -476,70 +397,91 @@
       <span>Help</span>
     </div>
     <div class="menu-right">
-      <div class="easytab-icon-status">⚡ EasyTab</div>
-      <span>100% 🔋</span>
-      <span>􀤆</span>
-      <span>􀊫</span>
-      <span>Sat Oct 3 &nbsp;10:45 AM</span>
-    </div>
-  </div>
+      <!-- 1. Window Switcher / EasyTab Icon -->
+      <div class="menu-icon-svg">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="2" y="7" width="13" height="12" rx="2.5"/>
+          <path d="M7 4h12a2.5 2.5 0 0 1 2.5 2.5V16" stroke-linecap="round"/>
+          <circle cx="5.5" cy="10.5" r="0.7" fill="currentColor"/>
+          <circle cx="8" cy="10.5" r="0.7" fill="currentColor"/>
+          <circle cx="10.5" cy="10.5" r="0.7" fill="currentColor"/>
+        </svg>
+      </div>
 
-  <!-- Background Desktop Windows -->
-  <div class="desktop-backdrop">
-    <!-- Window 1: Terminal / Ghostty -->
-    <div class="bg-window window-code">
-      <div class="window-titlebar">
-        <div class="traffic-lights">
-          <div class="traffic-dot dot-red"></div>
-          <div class="traffic-dot dot-yellow"></div>
-          <div class="traffic-dot dot-green"></div>
-        </div>
-        <div class="window-title-text">Ghostty — ~/Developer/Freebies/EasyTab</div>
+      <!-- 2. Now Playing -->
+      <div class="menu-icon-svg">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="9"/>
+          <polygon points="10 8 16 12 10 16" fill="currentColor"/>
+        </svg>
       </div>
-      <div class="code-body">
-        <span class="code-kw">import</span> <span class="code-type">AppKit</span><br>
-        <span class="code-kw">import</span> <span class="code-type">CoreGraphics</span><br><br>
-        <span class="code-comment">// High-performance pure Swift window switcher engine</span><br>
-        <span class="code-kw">public final class</span> <span class="code-type">SwitcherEngine</span> {<br>
-        &nbsp;&nbsp;<span class="code-kw">private var</span> windows: [<span class="code-type">WindowItem</span>]<br>
-        &nbsp;&nbsp;<span class="code-kw">private(set) var</span> selectedIndex: <span class="code-type">Int</span> = <span class="code-str">0</span><br><br>
-        &nbsp;&nbsp;<span class="code-kw">public func</span> <span class="code-func">cycleForward</span>() {<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;selectedIndex = (selectedIndex + <span class="code-str">1</span>) % windows.count<br>
-        &nbsp;&nbsp;}<br>
-        }<br><br>
-        <span class="code-comment">$ ./scripts/run_tests.sh</span><br>
-        <span style="color: #4ade80;">🎉 ALL 10 TESTS PASSED SUCCESSFULLY! (0 Failures)</span>
-      </div>
-    </div>
 
-    <!-- Window 2: Browser (GitHub Repo) -->
-    <div class="bg-window window-browser">
-      <div class="browser-tabbar">
-        <div class="traffic-lights">
-          <div class="traffic-dot dot-red"></div>
-          <div class="traffic-dot dot-yellow"></div>
-          <div class="traffic-dot dot-green"></div>
-        </div>
-        <div class="browser-tab">
-          <span>⚡</span>
-          <span>rynergold/EasyTab — GitHub</span>
-        </div>
+      <!-- 3. Bluetooth -->
+      <div class="menu-icon-svg">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m7 7 10 10-5 5V2l5 5L7 17"/>
+        </svg>
       </div>
-      <div class="browser-addressbar">
-        🔒 https://github.com/rynergold/EasyTab
-      </div>
-      <div style="padding: 28px; color: #f1f5f9;">
-        <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">rynergold / EasyTab</h2>
-        <p style="font-size: 14px; color: #94a3b8; margin-bottom: 20px;">Fast, lightweight, 100% free and open-source Alt-Tab window switcher for macOS</p>
-        <div style="display: flex; gap: 10px;">
-          <span style="padding: 5px 12px; background: #232734; border-radius: 6px; font-size: 12px; border: 1px solid rgba(255,255,255,0.08);">⭐️ Star 142</span>
-          <span style="padding: 5px 12px; background: #232734; border-radius: 6px; font-size: 12px; border: 1px solid rgba(255,255,255,0.08);">v1.2.0 Latest</span>
-        </div>
-      </div>
-    </div>
 
-    <!-- Soft Desktop Vignette -->
-    <div class="desktop-dim"></div>
+      <!-- 4. Input Menu -->
+      <div class="menu-icon-svg">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="6" cy="11" r="1" fill="currentColor"/>
+          <circle cx="12" cy="7" r="1" fill="currentColor"/>
+          <circle cx="18" cy="11" r="1" fill="currentColor"/>
+          <line x1="8" y1="16" x2="16" y2="16" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <!-- 5. Real Battery Icon (Matches User's Real Battery) -->
+      <div class="menu-icon-svg">
+        <svg width="22" height="13" viewBox="0 0 26 14" fill="none">
+          <rect x="1" y="1" width="20" height="12" rx="3.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M23 4.5v5c.8-.4 1.2-1.2 1.2-2.5s-.4-2.1-1.2-2.5z" fill="currentColor"/>
+          <rect x="3" y="3" width="13" height="8" rx="2" fill="currentColor"/>
+        </svg>
+      </div>
+
+      <!-- 6. Command / CheatSheet Icon -->
+      <div class="menu-icon-svg">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="3" width="18" height="18" rx="4"/>
+          <line x1="7" y1="8" x2="13" y2="8" stroke-linecap="round"/>
+          <line x1="7" y1="12" x2="13" y2="12" stroke-linecap="round"/>
+          <line x1="7" y1="16" x2="13" y2="16" stroke-linecap="round"/>
+          <circle cx="17" cy="12" r="1.5" stroke="currentColor"/>
+        </svg>
+      </div>
+
+      <!-- 7. Crescent Moon (Focus / DND) -->
+      <div class="menu-icon-svg">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </div>
+
+      <!-- 8. Real Wi-Fi Glyph -->
+      <div class="menu-icon-svg">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+          <line x1="12" y1="19.5" x2="12.01" y2="19.5" stroke-width="2.5"/>
+        </svg>
+      </div>
+
+      <!-- 9. Control Center Toggles -->
+      <div class="menu-icon-svg">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="4" width="18" height="7" rx="3.5" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="7.5" cy="7.5" r="2.2" fill="currentColor"/>
+          <rect x="3" y="13" width="18" height="7" rx="3.5" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="16.5" cy="16.5" r="2.2" fill="currentColor"/>
+        </svg>
+      </div>
+
+      <!-- 10. Clock -->
+      <span class="menu-clock">Sat Oct 3 &nbsp;10:55</span>
+    </div>
   </div>
 
   <!-- EasyTab HUD (Front & Center) -->
@@ -594,23 +536,31 @@
         <div class="card-title">rynergold/EasyTab — GitHub</div>
       </div>
 
-      <!-- Card 3: Xcode (Unselected) -->
+      <!-- Card 3: Google Antigravity (Unselected) -->
       <div class="window-card">
         <div class="card-thumbnail-box">
-          <div class="mini-window-content mini-code-editor">
+          <div class="mini-window-content mini-antigravity">
             <div class="mini-titlebar">
               <div class="mini-dot dot-red"></div>
               <div class="mini-dot dot-yellow"></div>
               <div class="mini-dot dot-green"></div>
-              <span style="color: #64748b; margin-left: 4px; font-size: 6.5px;">AppKitSwitcherView.swift</span>
+              <span style="color: #64748b; margin-left: 4px; font-size: 6.5px;">Google Antigravity</span>
             </div>
-            <div style="color: #f472b6;">final class <span style="color: #38bdf8;">WindowCardView</span> {</div>
-            <div style="color: #94a3b8; padding-left: 6px;">thumbnailContainer.layer...</div>
-            <div style="color: #94a3b8; padding-left: 6px;">setSelected(isSelected)</div>
-            <div style="color: #f472b6;">}</div>
+            <div class="mini-ag-sidebar">
+              <div class="mini-ag-left">
+                <span style="color: #38bdf8; font-weight: 700;">Chat</span>
+                <span style="color: #94a3b8;">Work</span>
+                <span style="color: #94a3b8;">Skills</span>
+              </div>
+              <div class="mini-ag-main">
+                <div style="color: #fff; font-weight: 600;">Pair Programming</div>
+                <div style="color: #64748b; margin-top: 2px;">"hero showcase screenshot"</div>
+                <div style="color: #38bdf8; margin-top: 3px;">● Agent Active</div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="card-title">EasyTab — Xcode</div>
+        <div class="card-title">Antigravity — EasyTab</div>
       </div>
 
       <!-- Card 4: Slack (Unselected) -->
@@ -645,14 +595,32 @@
     </div>
   </div>
 
-  <!-- macOS Dock at Bottom -->
+  <!-- macOS Dock with REAL HIGH-RESOLUTION APP ICONS -->
   <div class="dock-container">
-    <div class="dock-icon" style="background: linear-gradient(135deg, #38bdf8, #0284c7); color: white;">📁<div class="dock-dot"></div></div>
-    <div class="dock-icon" style="background: #111; color: #38bdf8; font-family: monospace; font-size: 18px; font-weight: 700;">&gt;_<div class="dock-dot"></div></div>
-    <div class="dock-icon" style="background: linear-gradient(135deg, #ff5e36, #ff2a6d); color: white; font-weight: 800;">🦁<div class="dock-dot"></div></div>
-    <div class="dock-icon" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">💬<div class="dock-dot"></div></div>
-    <div class="dock-icon" style="background: #18181b; color: #1db954;">🎵<div class="dock-dot"></div></div>
-    <div class="dock-icon" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: white;">🛠️<div class="dock-dot"></div></div>
+    <div class="dock-item">
+      <img src="../docs/images/icons/finder.png" class="dock-app-img" alt="Finder">
+      <div class="dock-dot"></div>
+    </div>
+    <div class="dock-item">
+      <img src="../docs/images/icons/ghostty.png" class="dock-app-img" alt="Ghostty">
+      <div class="dock-dot"></div>
+    </div>
+    <div class="dock-item">
+      <img src="../docs/images/icons/brave.png" class="dock-app-img" alt="Brave Browser">
+      <div class="dock-dot"></div>
+    </div>
+    <div class="dock-item">
+      <img src="../docs/images/icons/antigravity.png" class="dock-app-img" alt="Google Antigravity">
+      <div class="dock-dot"></div>
+    </div>
+    <div class="dock-item">
+      <img src="../docs/images/icons/slack.png" class="dock-app-img" alt="Slack">
+      <div class="dock-dot"></div>
+    </div>
+    <div class="dock-item">
+      <img src="../docs/images/icons/spotify.png" class="dock-app-img" alt="Spotify">
+      <div class="dock-dot"></div>
+    </div>
   </div>
 
 </body>
