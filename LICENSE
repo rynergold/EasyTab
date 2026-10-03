@@ -1,21 +1,31 @@
-MIT License
+EasyTab Freeware End User License Agreement (EULA)
 
-Copyright (c) 2026 EasyTab Contributors
+Copyright (c) 2026 Ryner Gold. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+PLEASE READ THIS AGREEMENT CAREFULLY BEFORE DOWNLOADING, INSTALLING, OR USING EASYTAB. BY DOWNLOADING, INSTALLING, OR USING THE SOFTWARE, YOU AGREE TO BE BOUND BY THE TERMS OF THIS AGREEMENT.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. GRANT OF LICENSE
+EasyTab ("the Software") is freeware. The author grants you a personal, non-exclusive, non-transferable, royalty-free license to download, install, and run the binary executable version of the Software on any compatible Apple macOS device for personal, educational, or commercial purposes.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+2. PROPRIETARY RIGHTS & CLOSED SOURCE
+The Software, including its source code, structure, visual design, user interface, icons, and documentation, constitutes proprietary intellectual property of the author. This license grants you the right to use the compiled Software; it does not convey any ownership, title, copyright, or access to the underlying source code.
+
+3. RESTRICTIONS
+You agree NOT to, directly or indirectly:
+(a) Decompile, reverse engineer, disassemble, decrypt, or otherwise attempt to derive or access the source code of the Software.
+(b) Modify, adapt, translate, or create derivative works based upon the Software.
+(c) Sell, rent, lease, sublicense, distribute for commercial gain, or monetize the Software in any manner.
+(d) Remove, obscure, or alter any copyright, trademark, or proprietary rights notices affixed to or contained within the Software.
+(e) Package, bundle, or redistribute the Software with third-party installers, adware, malware, or unwanted software.
+
+4. REDISTRIBUTION OF BINARIES
+You may redistribute official, unmodified installation packages (e.g., .dmg or .zip archives) free of charge, provided that this License Agreement is included in full without modification and no fee is charged for the distribution.
+
+5. TERMINATION
+This Agreement remains in effect until terminated. Your rights under this Agreement terminate automatically without notice if you fail to comply with any of its terms. Upon termination, you must cease all use of the Software and delete all copies in your possession.
+
+6. DISCLAIMER OF WARRANTY
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. THE AUTHOR DOES NOT WARRANT THAT THE SOFTWARE WILL BE ERROR-FREE, SECURE, OR UNINTERRUPTED.
+
+7. LIMITATION OF LIABILITY
+IN NO EVENT SHALL THE AUTHOR OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE, INCLUDING BUT NOT LIMITED TO DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES.
