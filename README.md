@@ -18,7 +18,7 @@ Default macOS `Cmd + Tab` only switches between **Applications**, not individual
 
 <br><br>
 
-<img src="docs/images/preview.png" alt="EasyTab Window Switcher in Action" width="800">
+<img src="docs/images/preview.png?v=1.2.0" alt="EasyTab Window Switcher in Action" width="800">
 
 </div>
 
