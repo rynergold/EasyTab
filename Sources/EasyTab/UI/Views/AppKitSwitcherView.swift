@@ -67,42 +67,6 @@ public final class WindowThumbnailCache: @unchecked Sendable {
     }
 }
 
-// MARK: - Physical Keyboard Keycap Badge View
-
-final class KeycapBadgeView: NSView {
-    private let label = NSTextField(labelWithString: "S")
-
-    override var isFlipped: Bool { true }
-
-    override init(frame: NSRect) {
-        super.init(frame: frame)
-        wantsLayer = true
-        layer?.cornerRadius = 5
-        layer?.masksToBounds = true
-        layer?.backgroundColor = NSColor(white: 1.0, alpha: 0.12).cgColor
-        layer?.borderWidth = 1.0
-        layer?.borderColor = NSColor(white: 1.0, alpha: 0.22).cgColor
-
-        if let descriptor = NSFont.systemFont(ofSize: 11, weight: .bold).fontDescriptor.withDesign(.rounded),
-           let roundedFont = NSFont(descriptor: descriptor, size: 11) {
-            label.font = roundedFont
-        } else {
-            label.font = NSFont.systemFont(ofSize: 11, weight: .bold)
-        }
-        label.textColor = NSColor.white.withAlphaComponent(0.92)
-        label.alignment = .center
-        addSubview(label)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func layout() {
-        super.layout()
-        label.frame = NSRect(x: 0, y: (bounds.height - 15) / 2, width: bounds.width, height: 15)
-    }
-}
 
 // MARK: - Clean Floating Window Preview Card (Large Format, 5-Per-Row)
 
@@ -136,7 +100,7 @@ final class WindowCardView: NSView {
         thumbnailContainer.wantsLayer = true
         thumbnailContainer.layer?.cornerRadius = 10
         thumbnailContainer.layer?.masksToBounds = true
-        thumbnailContainer.layer?.backgroundColor = NSColor(white: 0.12, alpha: 0.95).cgColor
+        thumbnailContainer.layer?.backgroundColor = NSColor(white: 0.12, alpha: 1.0).cgColor
         thumbnailContainer.layer?.borderWidth = 1.0
         thumbnailContainer.layer?.borderColor = NSColor(white: 0.32, alpha: 0.65).cgColor
 
@@ -185,26 +149,26 @@ final class WindowCardView: NSView {
     }
 
     func setSelected(_ selected: Bool, animated: Bool = true) {
-        let targetThumbnailAlpha: CGFloat = selected ? 1.0 : 0.78
-        let targetBorderWidth: CGFloat = selected ? 2.5 : 1.0
+        let targetThumbnailAlpha: CGFloat = 1.0 // Fully opaque, never translucent
+        let targetBorderWidth: CGFloat = selected ? 2.0 : 1.0
         let targetBorderColor = selected
-            ? NSColor.controlAccentColor.cgColor
-            : NSColor(white: 0.32, alpha: 0.65).cgColor
+            ? NSColor(white: 1.0, alpha: 0.70).cgColor
+            : NSColor(white: 0.28, alpha: 0.60).cgColor
         let titleColor = selected ? NSColor.white : NSColor.white.withAlphaComponent(0.85)
         let titleFont = selected
             ? NSFont.systemFont(ofSize: 11.5, weight: .semibold)
             : NSFont.systemFont(ofSize: 11.5, weight: .medium)
 
-        // Selected card gets a subtle macOS accent glow halo
+        // Selected card gets a clean, natural dark drop shadow
         let cardShadow = NSShadow()
         if selected {
-            cardShadow.shadowColor = NSColor.controlAccentColor.withAlphaComponent(0.40)
-            cardShadow.shadowBlurRadius = 18
+            cardShadow.shadowColor = NSColor.black.withAlphaComponent(0.65)
+            cardShadow.shadowBlurRadius = 14
             cardShadow.shadowOffset = NSSize(width: 0, height: -4)
         } else {
-            cardShadow.shadowColor = NSColor.black.withAlphaComponent(0.55)
-            cardShadow.shadowBlurRadius = 12
-            cardShadow.shadowOffset = NSSize(width: 0, height: -4)
+            cardShadow.shadowColor = NSColor.black.withAlphaComponent(0.40)
+            cardShadow.shadowBlurRadius = 10
+            cardShadow.shadowOffset = NSSize(width: 0, height: -3)
         }
         self.shadow = cardShadow
 
@@ -266,13 +230,15 @@ public final class AppKitSwitcherView: NSView {
     private let scrollView = NSScrollView()
     private let cardsContainer = FlippedContainerView()
 
-    // Spotlight-Style Search Bar Components
-    private let searchBarContainer = NSView()
+    // Spotlight-Style Search Bar Components (1:1 Native Spotlight match)
+    private let searchBarContainer = FlippedContainerView()
+    private let visualEffectView = NSVisualEffectView()
+    private let contentStackView = NSStackView()
     private let searchImageView = NSImageView()
     private let searchQueryLabel = NSTextField(labelWithString: "")
-    private let keycapView = KeycapBadgeView(frame: NSRect(x: 0, y: 0, width: 22, height: 22))
     private let searchBadgeLabel = NSTextField(labelWithString: "")
     private(set) var isSearching: Bool = false
+    private var totalGridWidth: CGFloat = 0
 
     public var onWindowClicked: ((WindowItem) -> Void)?
 
@@ -296,54 +262,65 @@ public final class AppKitSwitcherView: NSView {
     }
 
     private func buildSearchBarUI() {
-        // Spotlight pill container
+        // Spotlight rounded-rectangle container (14pt radius, zero drop shadow)
         searchBarContainer.wantsLayer = true
-        searchBarContainer.layer?.cornerRadius = 18 // Perfect 36pt pill capsule
-        searchBarContainer.layer?.masksToBounds = true
-        searchBarContainer.layer?.backgroundColor = NSColor(white: 0.14, alpha: 0.96).cgColor
-        searchBarContainer.layer?.borderWidth = 1.0
-        searchBarContainer.layer?.borderColor = NSColor(white: 0.30, alpha: 0.70).cgColor
+        searchBarContainer.layer?.backgroundColor = NSColor.clear.cgColor
+        searchBarContainer.layer?.cornerRadius = 14
+        searchBarContainer.layer?.masksToBounds = false
 
-        let dropShadow = NSShadow()
-        dropShadow.shadowColor = NSColor.black.withAlphaComponent(0.45)
-        dropShadow.shadowBlurRadius = 12
-        dropShadow.shadowOffset = NSSize(width: 0, height: -3)
-        searchBarContainer.shadow = dropShadow
+        // Native Hardware Frosted Glass (NSVisualEffectView) with subtle 85% opacity
+        visualEffectView.material = .hudWindow
+        visualEffectView.blendingMode = .behindWindow
+        visualEffectView.state = .active
+        visualEffectView.alphaValue = 0.85
+        visualEffectView.wantsLayer = true
+        visualEffectView.layer?.cornerRadius = 14
+        visualEffectView.layer?.masksToBounds = true
+        visualEffectView.layer?.borderWidth = 1.0
+        visualEffectView.layer?.borderColor = NSColor(white: 1.0, alpha: 0.16).cgColor
+        searchBarContainer.addSubview(visualEffectView)
 
-        // Native SF Symbol Magnifying Glass (0 KB external download)
-        let config = NSImage.SymbolConfiguration(pointSize: 13, weight: .medium)
+        // Perfect horizontal & vertical center alignment stack
+        contentStackView.orientation = .horizontal
+        contentStackView.alignment = .centerY
+        contentStackView.spacing = 10
+        contentStackView.distribution = .fill
+
+        // Native SF Symbol Magnifying Glass
+        let config = NSImage.SymbolConfiguration(pointSize: 16.5, weight: .regular)
         searchImageView.image = NSImage(systemSymbolName: "magnifyingglass", accessibilityDescription: "Search")?.withSymbolConfiguration(config)
-        searchImageView.contentTintColor = NSColor.white.withAlphaComponent(0.65)
+        searchImageView.contentTintColor = NSColor(white: 0.55, alpha: 0.85)
         searchImageView.imageScaling = .scaleProportionallyDown
-        searchBarContainer.addSubview(searchImageView)
+        searchImageView.setContentHuggingPriority(.required, for: .horizontal)
+        contentStackView.addArrangedSubview(searchImageView)
 
         // Search text query / placeholder
-        searchQueryLabel.font = NSFont.systemFont(ofSize: 13, weight: .regular)
-        searchQueryLabel.textColor = NSColor.white.withAlphaComponent(0.48)
-        searchQueryLabel.stringValue = "Search open windows..."
+        searchQueryLabel.font = NSFont.systemFont(ofSize: 16, weight: .regular)
+        searchQueryLabel.textColor = NSColor(white: 0.55, alpha: 0.85)
+        searchQueryLabel.stringValue = "Press S to Search"
         searchQueryLabel.lineBreakMode = .byTruncatingTail
-        searchBarContainer.addSubview(searchQueryLabel)
+        searchQueryLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        contentStackView.addArrangedSubview(searchQueryLabel)
 
-        // Clear [ S ] Keycap Badge
-        searchBarContainer.addSubview(keycapView)
-
-        // Match count badge (shown when actively searching)
-        searchBadgeLabel.font = NSFont.systemFont(ofSize: 11, weight: .semibold)
-        searchBadgeLabel.textColor = NSColor.controlAccentColor
+        // Match count badge (shown only when actively searching)
+        searchBadgeLabel.font = NSFont.systemFont(ofSize: 12.5, weight: .semibold)
+        searchBadgeLabel.textColor = NSColor(white: 1.0, alpha: 0.80)
         searchBadgeLabel.stringValue = ""
         searchBadgeLabel.alignment = .right
         searchBadgeLabel.isHidden = true
-        searchBarContainer.addSubview(searchBadgeLabel)
+        searchBadgeLabel.setContentHuggingPriority(.required, for: .horizontal)
+        contentStackView.addArrangedSubview(searchBadgeLabel)
 
+        searchBarContainer.addSubview(contentStackView)
         addSubview(searchBarContainer)
     }
 
     private func buildUI() {
         let cardWidth: CGFloat = 216
         let cardHeight: CGFloat = 168
-        let cardSpacing: CGFloat = 14
-        let rowSpacing: CGFloat = 14
-        let horizontalPadding: CGFloat = 12
+        let cardSpacing: CGFloat = 16
+        let rowSpacing: CGFloat = 16
+        let horizontalPadding: CGFloat = 16
 
         let columns = min(max(windows.count, 1), 5)
         let rows = Int(ceil(Double(windows.count) / 5.0))
@@ -355,7 +332,7 @@ public final class AppKitSwitcherView: NSView {
         scrollView.verticalScrollElasticity = .none
         addSubview(scrollView)
 
-        let totalGridWidth = horizontalPadding * 2 + CGFloat(columns) * cardWidth + CGFloat(max(0, columns - 1)) * cardSpacing
+        self.totalGridWidth = horizontalPadding * 2 + CGFloat(columns) * cardWidth + CGFloat(max(0, columns - 1)) * cardSpacing
         let totalGridHeight = CGFloat(rows) * cardHeight + CGFloat(max(0, rows - 1)) * rowSpacing
         cardsContainer.frame = NSRect(x: 0, y: 0, width: totalGridWidth, height: totalGridHeight)
         scrollView.documentView = cardsContainer
@@ -400,23 +377,31 @@ public final class AppKitSwitcherView: NSView {
 
     public override func layout() {
         super.layout()
-        let barWidth: CGFloat = min(360, max(300, bounds.width - 64))
-        searchBarContainer.frame = NSRect(x: (bounds.width - barWidth) / 2, y: 8, width: barWidth, height: 36)
-        searchImageView.frame = NSRect(x: 12, y: 10, width: 16, height: 16)
-        searchQueryLabel.frame = NSRect(x: 36, y: 9, width: barWidth - 110, height: 18)
-        keycapView.frame = NSRect(x: barWidth - 32, y: 7, width: 22, height: 22)
-        searchBadgeLabel.frame = NSRect(x: barWidth - 95, y: 9, width: 85, height: 18)
+        let barWidth: CGFloat = min(620, max(460, bounds.width - 48))
+        let barHeight: CGFloat = 48
+        searchBarContainer.frame = NSRect(x: (bounds.width - barWidth) / 2, y: 16, width: barWidth, height: barHeight)
 
-        let scrollY: CGFloat = 56
+        // Fit frosted glass view to container (14pt radius, zero drop shadow)
+        visualEffectView.frame = searchBarContainer.bounds
+        visualEffectView.layer?.cornerRadius = 14
+
+        // Layout stack with exact horizontal padding and perfect vertical optical centering
+        contentStackView.frame = NSRect(x: 18, y: 0, width: barWidth - 36, height: barHeight)
+
+        // Spotlight search bar bottom is at y=64. Generous 30pt separation to cards.
+        let scrollY: CGFloat = 94
         let scrollHeight = max(0, bounds.height - scrollY)
-        scrollView.frame = NSRect(x: 0, y: scrollY, width: bounds.width, height: scrollHeight)
+        let effectiveGridWidth = totalGridWidth > 0 ? totalGridWidth : bounds.width
+        let scrollWidth = min(effectiveGridWidth, bounds.width)
+        let scrollX = max(0, (bounds.width - scrollWidth) / 2)
+        scrollView.frame = NSRect(x: scrollX, y: scrollY, width: scrollWidth, height: scrollHeight)
     }
 
     public func enterSearch(query: String, selectedIndex: Int, matchedIndices: [Int]) {
         self.isSearching = true
-        searchBarContainer.layer?.borderColor = NSColor.controlAccentColor.cgColor
-        searchBarContainer.layer?.borderWidth = 1.5
-        keycapView.isHidden = true
+        visualEffectView.alphaValue = 1.0 // Fully opaque when selected
+        visualEffectView.layer?.borderColor = NSColor(white: 1.0, alpha: 0.70).cgColor
+        visualEffectView.layer?.borderWidth = 1.25
         searchBadgeLabel.isHidden = false
         updateSearch(query: query, selectedIndex: selectedIndex, matchedIndices: matchedIndices)
     }
@@ -429,19 +414,22 @@ public final class AppKitSwitcherView: NSView {
             searchQueryLabel.stringValue = "|"
             searchQueryLabel.textColor = .white
             searchBadgeLabel.stringValue = "\(windows.count) windows"
-            searchBadgeLabel.textColor = NSColor.controlAccentColor
-            searchBarContainer.layer?.borderColor = NSColor.controlAccentColor.cgColor
+            searchBadgeLabel.textColor = NSColor(white: 1.0, alpha: 0.80)
+            visualEffectView.layer?.borderColor = NSColor(white: 1.0, alpha: 0.65).cgColor
+            visualEffectView.layer?.borderWidth = 1.25
         } else {
             searchQueryLabel.stringValue = "\(query)|"
             searchQueryLabel.textColor = .white
             if hasMatches {
                 searchBadgeLabel.stringValue = "\(matchedIndices.count) match\(matchedIndices.count == 1 ? "" : "es")"
-                searchBadgeLabel.textColor = NSColor.controlAccentColor
-                searchBarContainer.layer?.borderColor = NSColor.controlAccentColor.cgColor
+                searchBadgeLabel.textColor = NSColor(white: 1.0, alpha: 0.80)
+                visualEffectView.layer?.borderColor = NSColor(white: 1.0, alpha: 0.65).cgColor
+                visualEffectView.layer?.borderWidth = 1.25
             } else {
                 searchBadgeLabel.stringValue = "No matches"
                 searchBadgeLabel.textColor = NSColor.systemRed
-                searchBarContainer.layer?.borderColor = NSColor.systemRed.withAlphaComponent(0.85).cgColor
+                visualEffectView.layer?.borderColor = NSColor.systemRed.withAlphaComponent(0.85).cgColor
+                visualEffectView.layer?.borderWidth = 1.25
             }
         }
 
@@ -470,7 +458,7 @@ public final class AppKitSwitcherView: NSView {
 
         // Auto-scroll vertically if grid exceeds visible rows
         let cardHeight: CGFloat = 168
-        let rowSpacing: CGFloat = 14
+        let rowSpacing: CGFloat = 16
         let targetRow = newIndex / 5
         let visibleHeight = scrollView.bounds.height
         guard visibleHeight > 0 else { return }
@@ -498,22 +486,23 @@ public final class AppKitSwitcherView: NSView {
     public func calculatePreferredSize() -> NSSize {
         let cardWidth: CGFloat = 216
         let cardHeight: CGFloat = 168
-        let cardSpacing: CGFloat = 14
-        let rowSpacing: CGFloat = 14
-        let horizontalPadding: CGFloat = 12
+        let cardSpacing: CGFloat = 16
+        let rowSpacing: CGFloat = 16
+        let horizontalPadding: CGFloat = 16
 
         let columns = min(max(windows.count, 1), 5)
         let rows = min(max(Int(ceil(Double(windows.count) / 5.0)), 1), 2)
 
-        let totalWidth = horizontalPadding * 2 + CGFloat(columns) * cardWidth + CGFloat(max(0, columns - 1)) * cardSpacing
+        let totalCardsWidth = horizontalPadding * 2 + CGFloat(columns) * cardWidth + CGFloat(max(0, columns - 1)) * cardSpacing
         let totalGridHeight = CGFloat(rows) * cardHeight + CGFloat(max(0, rows - 1)) * rowSpacing
 
-        let searchBarHeight: CGFloat = 36
-        let searchMarginBottom: CGFloat = 16
-        let topPadding: CGFloat = 8
-        let bottomPadding: CGFloat = 12
+        let topPadding: CGFloat = 16
+        let searchBarHeight: CGFloat = 48
+        let searchMarginBottom: CGFloat = 30
+        let bottomPadding: CGFloat = 18
         let totalHeight = topPadding + searchBarHeight + searchMarginBottom + totalGridHeight + bottomPadding
 
-        return NSSize(width: max(totalWidth, 360), height: totalHeight)
+        let minHUDWidth: CGFloat = 640
+        return NSSize(width: max(totalCardsWidth, minHUDWidth), height: totalHeight)
     }
 }
