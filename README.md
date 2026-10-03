@@ -50,11 +50,16 @@ Default macOS `Cmd + Tab` only switches between **Applications**, not individual
 
 ### Option 1: Homebrew (Recommended)
 ```bash
+brew install --cask rynergold/easytab/easytab
+```
+Or tap first:
+```bash
+brew tap rynergold/easytab
 brew install --cask easytab
 ```
 
 ### Option 2: Direct Download (`.dmg`)
-1. Download the latest **`EasyTab.dmg`** from [Releases](https://github.com/rynergold/EasyTab/releases).
+1. Download the latest **`EasyTab.dmg`** from [Public Releases](https://github.com/rynergold/homebrew-easytab/releases).
 2. Open the `.dmg` and drag **EasyTab.app** into your **Applications** folder.
 
 > **Note on Permissions**: macOS requires **Accessibility permission** for any app that intercepts global hotkeys and switches windows. On first launch, EasyTab will prompt you to enable it in **System Settings > Privacy & Security > Accessibility**. Because EasyTab is free software and not signed with a paid Apple Developer certificate, macOS Gatekeeper may show a warning on first launch. Simply **Right-Click > Open** (or run `xattr -d com.apple.quarantine /Applications/EasyTab.app`).
