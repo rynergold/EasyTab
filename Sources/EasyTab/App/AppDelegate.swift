@@ -65,6 +65,10 @@ public final class AppDelegate: NSObject, NSApplicationDelegate, EventTapDelegat
         return engine.state.isShowing
     }
 
+    public func isSearchActive() -> Bool {
+        return engine.state.isSearching
+    }
+
     public func onTabPressed() {
         let action = engine.handleTab {
             return self.windowProvider.getVisibleWindowsSync()
@@ -82,6 +86,26 @@ public final class AppDelegate: NSObject, NSApplicationDelegate, EventTapDelegat
         execute(action: action)
     }
 
+    public func onSearchActivated() {
+        let action = engine.handleSearchToggle()
+        execute(action: action)
+    }
+
+    public func onSearchInput(_ char: Character) {
+        let action = engine.handleSearchInput(char)
+        execute(action: action)
+    }
+
+    public func onSearchBackspace() {
+        let action = engine.handleSearchBackspace()
+        execute(action: action)
+    }
+
+    public func onEnterPressed() {
+        let action = engine.handleEnter()
+        execute(action: action)
+    }
+
     // MARK: - Action Execution
 
     private func execute(action: SwitcherAction) {
@@ -94,6 +118,12 @@ public final class AppDelegate: NSObject, NSApplicationDelegate, EventTapDelegat
 
         case .updateSelection(let selectedIndex):
             hudPanel?.updateSelection(selectedIndex: selectedIndex)
+
+        case .enterSearch(let query, let selectedIndex, let matchedIndices):
+            hudPanel?.enterSearch(query: query, selectedIndex: selectedIndex, matchedIndices: matchedIndices)
+
+        case .updateSearch(let query, let selectedIndex, let matchedIndices):
+            hudPanel?.updateSearch(query: query, selectedIndex: selectedIndex, matchedIndices: matchedIndices)
 
         case .focusAndDismiss(let window):
             hudPanel?.hide()

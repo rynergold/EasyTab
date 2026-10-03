@@ -24,7 +24,12 @@ public protocol EventTapDelegate: AnyObject, Sendable {
     func onTabPressed()
     func onModifierReleased()
     func onCancelPressed()
+    func onSearchActivated()
+    func onSearchInput(_ char: Character)
+    func onSearchBackspace()
+    func onEnterPressed()
     func isSwitcherActive() -> Bool
+    func isSearchActive() -> Bool
 }
 
 public final class EventTapInterceptor: @unchecked Sendable {
@@ -123,30 +128,95 @@ public final class EventTapInterceptor: @unchecked Sendable {
         // 1. Check for Command modifier release when switcher is open
         if type == .flagsChanged {
             if !isCmdDown && delegate.isSwitcherActive() {
-                DispatchQueue.main.async {
-                    delegate.onModifierReleased()
+                // If search mode is active, lock open! Releasing Command is a no-op so user can type freely.
+                if !delegate.isSearchActive() {
+                    DispatchQueue.main.async {
+                        delegate.onModifierReleased()
+                    }
                 }
             }
             return Unmanaged.passUnretained(event)
         }
 
-        // 2. Check for KeyDown events: Command+Tab (keycode 48) & Escape (keycode 53)
+        // 2. KeyDown events
         if type == .keyDown {
             let keycode = event.getIntegerValueField(.keyboardEventKeycode)
 
-            // Command + Tab key (keycode 48)
+            // Command + Tab key (keycode 48) - Opens or cycles the switcher
             if keycode == 48 && isCmdDown {
                 DispatchQueue.main.async {
                     delegate.onTabPressed()
                 }
-                // Suppress Tab keystroke so it doesn't trigger native macOS Dock switcher
                 return nil
             }
 
+            // All other keystrokes only apply when the switcher is active
+            guard delegate.isSwitcherActive() else {
+                return Unmanaged.passUnretained(event)
+            }
+
             // Escape key (keycode 53) dismisses switcher
-            if keycode == 53 && delegate.isSwitcherActive() {
+            if keycode == 53 {
                 DispatchQueue.main.async {
                     delegate.onCancelPressed()
+                }
+                return nil
+            }
+
+            // In Search Mode:
+            if delegate.isSearchActive() {
+                // Return / Enter key (keycode 36 or 76 on numpad) -> confirm selection
+                if keycode == 36 || keycode == 76 {
+                    DispatchQueue.main.async {
+                        delegate.onEnterPressed()
+                    }
+                    return nil
+                }
+
+                // Tab key (keycode 48) -> cycle through matching results
+                if keycode == 48 {
+                    DispatchQueue.main.async {
+                        delegate.onTabPressed()
+                    }
+                    return nil
+                }
+
+                // Backspace / Delete key (keycode 51)
+                if keycode == 51 {
+                    DispatchQueue.main.async {
+                        delegate.onSearchBackspace()
+                    }
+                    return nil
+                }
+
+                // Printable text characters typed by user
+                if let chars = NSEvent(cgEvent: event)?.characters, !chars.isEmpty {
+                    for char in chars {
+                        if !char.isNewline && char != "\t" {
+                            DispatchQueue.main.async {
+                                delegate.onSearchInput(char)
+                            }
+                        }
+                    }
+                    return nil
+                }
+
+                return nil
+            }
+
+            // In Standard Active Mode:
+            // 's' or 'S' key (keycode 1) -> enter Search Mode!
+            if keycode == 1 {
+                DispatchQueue.main.async {
+                    delegate.onSearchActivated()
+                }
+                return nil
+            }
+
+            // Enter key (keycode 36 or 76) -> confirm selection immediately
+            if keycode == 36 || keycode == 76 {
+                DispatchQueue.main.async {
+                    delegate.onEnterPressed()
                 }
                 return nil
             }
