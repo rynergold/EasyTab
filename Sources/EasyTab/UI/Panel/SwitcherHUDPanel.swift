@@ -41,9 +41,7 @@ public final class SwitcherHUDPanel: NSPanel {
     }
 
     public func enterSearch(query: String, selectedIndex: Int, matchedIndices: [Int]) {
-        guard let view = switcherView else { return }
-        reposition(for: view.calculatePreferredSize(isSearching: true))
-        view.enterSearch(query: query, selectedIndex: selectedIndex, matchedIndices: matchedIndices)
+        switcherView?.enterSearch(query: query, selectedIndex: selectedIndex, matchedIndices: matchedIndices)
     }
 
     public func updateSearch(query: String, selectedIndex: Int, matchedIndices: [Int]) {

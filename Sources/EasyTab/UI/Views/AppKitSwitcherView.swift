@@ -250,9 +250,9 @@ public final class AppKitSwitcherView: NSView {
         searchBarContainer.layer?.cornerRadius = 16
         searchBarContainer.layer?.masksToBounds = true
         searchBarContainer.layer?.backgroundColor = NSColor(white: 0.14, alpha: 0.98).cgColor
-        searchBarContainer.layer?.borderWidth = 1.5
-        searchBarContainer.layer?.borderColor = NSColor.controlAccentColor.cgColor
-        searchBarContainer.isHidden = true
+        searchBarContainer.layer?.borderWidth = 1.0
+        searchBarContainer.layer?.borderColor = NSColor(white: 0.28, alpha: 0.70).cgColor
+        searchBarContainer.isHidden = false // Option 1: always visible with [ S ] hint!
 
         let dropShadow = NSShadow()
         dropShadow.shadowColor = NSColor.black.withAlphaComponent(0.40)
@@ -266,14 +266,16 @@ public final class AppKitSwitcherView: NSView {
         searchBarContainer.addSubview(searchIconLabel)
 
         // Search text query
-        searchQueryLabel.font = NSFont.systemFont(ofSize: 13, weight: .medium)
-        searchQueryLabel.textColor = .white
+        searchQueryLabel.font = NSFont.systemFont(ofSize: 12.5, weight: .medium)
+        searchQueryLabel.textColor = NSColor.white.withAlphaComponent(0.45)
+        searchQueryLabel.stringValue = "Search open windows..."
         searchQueryLabel.lineBreakMode = .byTruncatingTail
         searchBarContainer.addSubview(searchQueryLabel)
 
-        // Match count badge
+        // Match count badge / [ S ] keycap
         searchBadgeLabel.font = NSFont.systemFont(ofSize: 11, weight: .semibold)
-        searchBadgeLabel.textColor = NSColor.controlAccentColor
+        searchBadgeLabel.textColor = NSColor.white.withAlphaComponent(0.60)
+        searchBadgeLabel.stringValue = "[ S ]"
         searchBadgeLabel.alignment = .right
         searchBarContainer.addSubview(searchBadgeLabel)
 
@@ -330,25 +332,19 @@ public final class AppKitSwitcherView: NSView {
 
     public override func layout() {
         super.layout()
-        if isSearching {
-            let barWidth: CGFloat = min(360, max(280, bounds.width - 48))
-            searchBarContainer.frame = NSRect(x: (bounds.width - barWidth) / 2, y: 6, width: barWidth, height: 32)
-            searchIconLabel.frame = NSRect(x: 10, y: 7, width: 18, height: 18)
-            searchQueryLabel.frame = NSRect(x: 34, y: 7, width: barWidth - 120, height: 18)
-            searchBadgeLabel.frame = NSRect(x: barWidth - 84, y: 7, width: 74, height: 18)
+        let barWidth: CGFloat = min(340, max(280, bounds.width - 48))
+        searchBarContainer.frame = NSRect(x: (bounds.width - barWidth) / 2, y: 6, width: barWidth, height: 32)
+        searchIconLabel.frame = NSRect(x: 10, y: 7, width: 18, height: 18)
+        searchQueryLabel.frame = NSRect(x: 34, y: 7, width: barWidth - 110, height: 18)
+        searchBadgeLabel.frame = NSRect(x: barWidth - 68, y: 7, width: 58, height: 18)
 
-            scrollView.frame = NSRect(x: 0, y: 46, width: bounds.width, height: 136)
-        } else {
-            searchBarContainer.frame = .zero
-            scrollView.frame = NSRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
-        }
+        scrollView.frame = NSRect(x: 0, y: 46, width: bounds.width, height: 136)
     }
 
     public func enterSearch(query: String, selectedIndex: Int, matchedIndices: [Int]) {
         self.isSearching = true
-        self.searchBarContainer.isHidden = false
-        needsLayout = true
-        layoutSubtreeIfNeeded()
+        searchBarContainer.layer?.borderColor = NSColor.controlAccentColor.cgColor
+        searchBarContainer.layer?.borderWidth = 1.5
         updateSearch(query: query, selectedIndex: selectedIndex, matchedIndices: matchedIndices)
     }
 
@@ -357,11 +353,11 @@ public final class AppKitSwitcherView: NSView {
 
         // Update search query text & cursor
         if query.isEmpty {
-            searchQueryLabel.stringValue = "Search open windows..."
-            searchQueryLabel.textColor = NSColor.white.withAlphaComponent(0.45)
+            searchQueryLabel.stringValue = "|"
+            searchQueryLabel.textColor = .white
             searchBadgeLabel.stringValue = "\(windows.count) windows"
-            searchBadgeLabel.textColor = NSColor.white.withAlphaComponent(0.55)
-            searchBarContainer.layer?.borderColor = NSColor(white: 0.35, alpha: 0.8).cgColor
+            searchBadgeLabel.textColor = NSColor.controlAccentColor
+            searchBarContainer.layer?.borderColor = NSColor.controlAccentColor.cgColor
         } else {
             searchQueryLabel.stringValue = "\(query)|"
             searchQueryLabel.textColor = .white
@@ -424,13 +420,12 @@ public final class AppKitSwitcherView: NSView {
         cardViews.removeAll()
     }
 
-    public func calculatePreferredSize(isSearching: Bool = false) -> NSSize {
+    public func calculatePreferredSize() -> NSSize {
         let cardWidth: CGFloat = 174
         let cardSpacing: CGFloat = 14
         let horizontalPadding: CGFloat = 8
         let totalCardsWidth = horizontalPadding * 2 + CGFloat(windows.count) * cardWidth + CGFloat(max(0, windows.count - 1)) * cardSpacing
         let preferredWidth = min(max(totalCardsWidth, 380), 1080)
-        let preferredHeight: CGFloat = isSearching ? 188 : 144
-        return NSSize(width: preferredWidth, height: preferredHeight)
+        return NSSize(width: preferredWidth, height: 188)
     }
 }
