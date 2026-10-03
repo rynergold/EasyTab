@@ -22,7 +22,7 @@ func makeSampleWindows(count: Int) -> [WindowItem] {
 }
 
 func runAllTests() {
-    print("🚀 Running EasyTab Test Suite...")
+    print("🚀 Running WindowSwitchingBehaviorTests...")
 
     // ==========================================
     // 1. HAPPY PATHS
